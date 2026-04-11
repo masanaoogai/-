@@ -1,0 +1,32 @@
+{
+  "name": "まいにち脳活",
+  "short_name": "脳活",
+  "description": "毎日3分で脳を元気に。認知機能を楽しく・毎日・続けやすく。",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#22C55E",
+  "theme_color": "#22C55E",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "health",
+    "lifestyle",
+    "games"
+  ],
+  "prefer_related_applications": false
+}
