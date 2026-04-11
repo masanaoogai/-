@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>まいにち脳活 — 管理画面</title>
+<style>
+:root {
+  --green: #16A34A;
+  --green-light: #DCFCE7;
+  --green-dark: #0d6e30;
+  --bg: #F0FDF4;
+  --surface: #fff;
+  --border: #D1FAE5;
+  --text: #111827;
+  --muted: #6B7280;
+  --danger: #EF4444;
+  --danger-light: #FEF2F2;
+  --warning: #F59E0B;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Meiryo',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ── トップバー ── */
+.topbar {
+  background:linear-gradient(135deg,#22C55E,#15803D);
+  padding:0 32px; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow:0 4px 20px rgba(22,163,74,0.3);
+  position:sticky; top:0; z-index:100;
+}
+.topbar-left { display:flex; align-items:center; gap:12px; }
+.topbar-logo { font-size:24px; font-weight:900; color:#fff; letter-spacing:0.06em; }
+.topbar-badge { background:rgba(255,255,255,0.2); color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:100px; }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+.btn-save-all {
+  background:#fff; color:var(--green); border:2px solid rgba(255,255,255,0.5);
+  border-radius:10px; padding:8px 22px; font-size:15px; font-weight:900; cursor:pointer;
+  transition:background 0.15s;
+}
+.btn-save-all:hover { background:rgba(255,255,255,0.9); }
+.btn-portal {
+  background:rgba(255,255,255,0.15); color:#fff; border:2px solid rgba(255,255,255,0.4);
+  border-radius:10px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer;
+  text-decoration:none; display:flex; align-items:center; gap:6px;
+  transition:background 0.15s;
+}
+.btn-portal:hover { background:rgba(255,255,255,0.25); }
+
+/* ── メイン ── */
+.main { max-width:1200px; margin:0 auto; padding:28px 24px; display:flex; flex-direction:column; gap:28px; }
+
+/* ── セクションヘッダー ── */
+.sec-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.sec-title { font-size:20px; font-weight:900; color:var(--text); display:flex; align-items:center; gap:10px; }
+.sec-title-icon { font-size:24px; }
+.sec-desc { font-size:13px; color:var(--muted); margin-top:3px; }
+
+/* ── カード ── */
+.card { background:var(--surface); border-radius:18px; border:1.5px solid #E5E7EB; overflow:hidden; }
+.card-header { background:var(--green-light); padding:16px 24px; border-bottom:1.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.card-header-title { font-size:17px; font-weight:900; color:var(--green); display:flex; align-items:center; gap:8px; }
+.card-body { padding:20px 24px; }
+
+/* ── テーブル ── */
+.tbl { width:100%; border-collapse:collapse; }
+.tbl th { text-align:left; font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; padding:0 12px 10px; border-bottom:2px solid #F3F4F6; }
+.tbl td { padding:10px 12px; border-bottom:1px solid #F9FAFB; vertical-align:middle; }
+.tbl tr:last-child td { border-bottom:none; }
+.tbl tr:hover td { background:#FAFAFA; }
+
+/* ── インプット ── */
+.url-input {
+  width:100%; border:1.5px solid #E5E7EB; border-radius:9px;
+  padding:9px 14px; font-size:14px; color:var(--text);
+  transition:border-color 0.15s, box-shadow 0.15s;
+  font-family:inherit; background:#FAFAFA;
+}
+.url-input:focus { outline:none; border-color:var(--green); box-shadow:0 0 0 3px rgba(34,197,94,0.12); background:#fff; }
+.url-input.has-url { border-color:#86EFAC; background:#F0FDF4; }
+.url-input.empty { border-color:#E5E7EB; }
+
+/* ── バッジ ── */
+.badge { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:100px; font-size:12px; font-weight:700; }
+.badge-active { background:#DCFCE7; color:#15803D; }
+.badge-empty  { background:#F3F4F6; color:#9CA3AF; }
+.badge-cat    { background:#EEF2FF; color:#4338CA; }
+.badge-blank  { background:#F9FAFB; color:#D1D5DB; border:1px dashed #D1D5DB; }
+
+/* ── ゲーム名 ── */
+.game-name-wrap { display:flex; align-items:center; gap:10px; }
+.game-emoji-badge { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.game-name-text { font-size:15px; font-weight:700; color:var(--text); }
+.game-name-sub  { font-size:12px; color:var(--muted); margin-top:2px; }
+
+/* ── アクションボタン ── */
+.btn-action { border:none; border-radius:8px; padding:6px 14px; font-size:13px; font-weight:700; cursor:pointer; transition:opacity 0.15s; }
+.btn-clear { background:#FEF2F2; color:var(--danger); }
+.btn-clear:hover { opacity:0.8; }
+.btn-test { background:#EFF6FF; color:#2563EB; }
+.btn-test:hover { opacity:0.8; }
+
+/* ── 統計バー ── */
+.stats-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.stat-card { background:var(--surface); border-radius:14px; border:1.5px solid #E5E7EB; padding:16px 20px; }
+.stat-num { font-size:32px; font-weight:900; color:var(--green); }
+.stat-label { font-size:13px; color:var(--muted); font-weight:600; margin-top:4px; }
+
+/* ── トースト ── */
+#toast { position:fixed; bottom:28px; right:28px; background:#111827; color:#fff; padding:12px 22px; border-radius:12px; font-size:15px; font-weight:700; opacity:0; pointer-events:none; transition:opacity 0.3s; z-index:999; display:flex; align-items:center; gap:8px; }
+#toast.show { opacity:1; }
+#toast.success { background:var(--green); }
+#toast.error   { background:var(--danger); }
+
+/* ── タブ ── */
+.tabs { display:flex; gap:4px; background:#F3F4F6; border-radius:12px; padding:4px; margin-bottom:20px; }
+.tab { flex:1; text-align:center; padding:9px 0; border-radius:9px; font-size:14px; font-weight:700; cursor:pointer; color:var(--muted); transition:all 0.15s; border:none; background:none; }
+.tab.active { background:#fff; color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,0.1); }
+
+/* ── セクション ── */
+.section { display:none; }
+.section.active { display:block; }
+
+/* ── フッター ── */
+.footer { text-align:center; padding:24px; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span style="font-size:28px;">🧠</span>
+    <span class="topbar-logo">まいにち脳活</span>
+    <span class="topbar-badge">管理画面</span>
+  </div>
+  <div class="topbar-right">
+    <a href="index.html" class="btn-portal" target="_blank">🔗 ポータルを開く</a>
+    <button class="btn-save-all" onclick="saveAll()">💾 全て保存</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- 統計 -->
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">登録ゲーム総数</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-active">0</div><div class="stat-label">URL設定済み</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-empty">0</div><div class="stat-label">準備中（未設定）</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-cat">7</div><div class="stat-label">カテゴリ数</div></div>
+  </div>
+
+  <!-- タブ -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('tab-training')">🎮 トレーニングゲーム</button>
+    <button class="tab" onclick="switchTab('tab-comp')">📋 総合テスト</button>
+    <button class="tab" onclick="switchTab('tab-settings')">⚙️ 設定</button>
+  </div>
+
+  <!-- トレーニングゲーム タブ -->
+  <div class="section active" id="tab-training">
+    <div id="training-sections"></div>
+  </div>
+
+  <!-- 総合テスト タブ -->
+  <div class="section" id="tab-comp">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-title">📋 総合テスト・パズル一覧</div>
+        <span class="badge badge-cat">総合テスト・パズル</span>
+      </div>
+      <div class="card-body">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th style="width:40px;">#</th>
+              <th style="width:240px;">ゲーム名</th>
+              <th>URL（空欄=準備中）</th>
+              <th style="width:80px;">状態</th>
+              <th style="width:140px;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="comp-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 設定タブ -->
+  <div class="section" id="tab-settings">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-title">⚙️ データ管理</div>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:#F9FAFB;border-radius:12px;border:1.5px solid #E5E7EB;">
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text);">📤 設定をエクスポート</div>
+            <div style="font-size:13px;color:var(--muted);margin-top:3px;">現在のURL設定をJSONファイルとして保存</div>
+          </div>
+          <button onclick="exportData()" style="background:var(--green);color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:15px;font-weight:700;cursor:pointer;">ダウンロード</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:#F9FAFB;border-radius:12px;border:1.5px solid #E5E7EB;">
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--text);">📥 設定をインポート</div>
+            <div style="font-size:13px;color:var(--muted);margin-top:3px;">エクスポートしたJSONを読み込んで復元</div>
+          </div>
+          <label style="background:#3B82F6;color:#fff;border-radius:10px;padding:10px 24px;font-size:15px;font-weight:700;cursor:pointer;">
+            ファイル選択
+            <input type="file" accept=".json" onchange="importData(event)" style="display:none;">
+          </label>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:#FEF2F2;border-radius:12px;border:1.5px solid #FECACA;">
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--danger);">🗑️ 全設定をリセット</div>
+            <div style="font-size:13px;color:var(--muted);margin-top:3px;">全URLを空にして初期状態に戻す</div>
+          </div>
+          <button onclick="resetAll()" style="background:var(--danger);color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:15px;font-weight:700;cursor:pointer;">リセット</button>
+        </div>
+        <!-- Supabase設定 -->
+        <div style="padding:20px;background:#EFF6FF;border-radius:14px;border:1.5px solid #BFDBFE;margin-bottom:8px;">
+          <div style="font-size:16px;font-weight:900;color:#1D4ED8;margin-bottom:14px;">🔑 Supabase接続設定</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div>
+              <label style="font-size:13px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">Project URL</label>
+              <input type="url" id="sb-url" placeholder="https://xxxxxxxx.supabase.co"
+                style="width:100%;border:1.5px solid #BFDBFE;border-radius:9px;padding:9px 14px;font-size:14px;font-family:monospace;"
+                value="">
+            </div>
+            <div>
+              <label style="font-size:13px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">Anon Key（公開キー）</label>
+              <input type="text" id="sb-key" placeholder="eyJhbGciOi..."
+                style="width:100%;border:1.5px solid #BFDBFE;border-radius:9px;padding:9px 14px;font-size:14px;font-family:monospace;"
+                value="">
+            </div>
+            <button onclick="saveSupabaseConfig()" style="background:#2563EB;color:#fff;border:none;border-radius:10px;padding:10px 28px;font-size:15px;font-weight:700;cursor:pointer;">Supabase設定を保存してindex.htmlに反映</button>
+            <p style="font-size:12px;color:#6B7280;margin-top:2px;">※ 設定を保存すると nokatsu_admin_sb キーでlocalStorageに保存され、index.htmlが読み込みます</p>
+          </div>
+        </div>
+
+        <div style="padding:16px;background:#F0FDF4;border-radius:12px;border:1.5px solid #86EFAC;">
+          <div style="font-size:15px;font-weight:700;color:var(--green);margin-bottom:8px;">💡 使い方</div>
+          <ol style="font-size:14px;color:#374151;line-height:2;padding-left:20px;">
+            <li>各ゲームのURLを入力して「全て保存」を押す</li>
+            <li>ポータル（index.html）を開くと自動でリンクが反映される</li>
+            <li>URLが空のゲームは「準備中」として表示される</li>
+            <li>テストボタンでURLが正しく開くか確認できる</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div class="footer">まいにち脳活 管理画面 — D&amp;P Media</div>
+<div id="toast">✓ 保存しました</div>
+
+<script>
+// ── マスターデータ ──
+const MASTER = {
+  training: {
+    calc:  { label:'計算力',  emoji:'🔢', color:'#10B981', bg:'#D1FAE5',
+      items:[{id:'calc-1',name:'お釣りはいくら？',emoji:'💰'},{id:'calc-2',name:'足して10（テン）パズル',emoji:'🔟'},{id:'calc-3',name:'虫食い算',emoji:'🐛'},{id:'calc-4',name:'フラッシュ連続足し算',emoji:'⚡'},{id:'calc-5',name:'カレンダー計算',emoji:'📅'},{id:'calc-6',name:'',emoji:'➕'},{id:'calc-7',name:'',emoji:'➕'},{id:'calc-8',name:'',emoji:'➕'},{id:'calc-9',name:'',emoji:'➕'},{id:'calc-10',name:'',emoji:'➕'}]},
+    obs:   { label:'観察力',  emoji:'👀', color:'#3B82F6', bg:'#DBEAFE',
+      items:[{id:'obs-1',name:'昭和の風景まちがい探し',emoji:'🏠'},{id:'obs-2',name:'どこが変わった？',emoji:'🔍'},{id:'obs-3',name:'シルエットクイズ',emoji:'🌑'},{id:'obs-4',name:'仲間はずれ探し',emoji:'🎯'},{id:'obs-5',name:'探し物競争',emoji:'🔎'},{id:'obs-6',name:'',emoji:'➕'},{id:'obs-7',name:'',emoji:'➕'},{id:'obs-8',name:'',emoji:'➕'},{id:'obs-9',name:'',emoji:'➕'},{id:'obs-10',name:'',emoji:'➕'}]},
+    mem:   { label:'記憶力',  emoji:'🧠', color:'#F59E0B', bg:'#FEF3C7',
+      items:[{id:'mem-1',name:'昭和の思い出・神経衰弱',emoji:'🎴'},{id:'mem-2',name:'お使いマスター',emoji:'🛒'},{id:'mem-3',name:'順番ピカピカ',emoji:'✨'},{id:'mem-4',name:'顔と名前、覚えてる？',emoji:'👤'},{id:'mem-5',name:'どこに隠した？',emoji:'🔍'},{id:'mem-6',name:'',emoji:'➕'},{id:'mem-7',name:'',emoji:'➕'},{id:'mem-8',name:'',emoji:'➕'},{id:'mem-9',name:'',emoji:'➕'},{id:'mem-10',name:'',emoji:'➕'}]},
+    jud:   { label:'判断力',  emoji:'⚖️', color:'#8B5CF6', bg:'#EDE9FE',
+      items:[{id:'jud-1',name:'後出しじゃんけん',emoji:'✊'},{id:'jud-2',name:'ことば色パズル',emoji:'🎨'},{id:'jud-3',name:'ゴミの分別達人',emoji:'♻️'},{id:'jud-4',name:'交通標識クイズ',emoji:'🚦'},{id:'jud-5',name:'道草迷路',emoji:'🌿'},{id:'jud-6',name:'',emoji:'➕'},{id:'jud-7',name:'',emoji:'➕'},{id:'jud-8',name:'',emoji:'➕'},{id:'jud-9',name:'',emoji:'➕'},{id:'jud-10',name:'',emoji:'➕'}]},
+    int:   { label:'直感力',  emoji:'✨', color:'#EC4899', bg:'#FCE7F3',
+      items:[{id:'int-1',name:'瞬間記憶',emoji:'⚡'},{id:'int-2',name:'どっちが多い？',emoji:'🔢'},{id:'int-3',name:'ピタリと止めろ',emoji:'🎯'},{id:'int-4',name:'一部から全体を推測',emoji:'🧩'},{id:'int-5',name:'ハイ＆ロー',emoji:'🎲'},{id:'int-6',name:'',emoji:'➕'},{id:'int-7',name:'',emoji:'➕'},{id:'int-8',name:'',emoji:'➕'},{id:'int-9',name:'',emoji:'➕'},{id:'int-10',name:'',emoji:'➕'}]},
+    react: { label:'反応力',  emoji:'⚡', color:'#EF4444', bg:'#FEE2E2',
+      items:[{id:'react-1',name:'ぽこぽこモグラたたき',emoji:'🔨'},{id:'react-2',name:'落ち葉キャッチ',emoji:'🍂'},{id:'react-3',name:'右へ左へ仕分け人',emoji:'↔️'},{id:'react-4',name:'信号機タップ',emoji:'🚦'},{id:'react-5',name:'走る新幹線 動体視力',emoji:'🚄'},{id:'react-6',name:'',emoji:'➕'},{id:'react-7',name:'',emoji:'➕'},{id:'react-8',name:'',emoji:'➕'},{id:'react-9',name:'',emoji:'➕'},{id:'react-10',name:'',emoji:'➕'}]},
+    know:  { label:'知力',    emoji:'📚', color:'#6366F1', bg:'#E0E7FF',
+      items:[{id:'know-1',name:'都道府県シルエット',emoji:'🗾'},{id:'know-2',name:'四字熟語・ことわざ',emoji:'📝'},{id:'know-3',name:'難読漢字クイズ',emoji:'📖'},{id:'know-4',name:'レトロクイズ',emoji:'📻'},{id:'know-5',name:'名産品ご当地クイズ',emoji:'🏮'},{id:'know-6',name:'',emoji:'➕'},{id:'know-7',name:'',emoji:'➕'},{id:'know-8',name:'',emoji:'➕'},{id:'know-9',name:'',emoji:'➕'},{id:'know-10',name:'',emoji:'➕'}]},
+  },
+  comp: [
+    // 総合テスト１（4ゲーム）
+    {id:'spp1-1', name:'ことば色パズル',         emoji:'🎨', color:'#8B5CF6', light:'#EDE9FE', course:'総合テスト１'},
+    {id:'spp1-2', name:'頭の元気チェック',       emoji:'🧠', color:'#22C55E', light:'#DCFCE7', course:'総合テスト１'},
+    {id:'spp1-3', name:'数字当てパズル',         emoji:'🔢', color:'#3B82F6', light:'#DBEAFE', course:'総合テスト１'},
+    {id:'spp1-4', name:'認知症リスク問診票',     emoji:'📝', color:'#F59E0B', light:'#FEF3C7', course:'総合テスト１'},
+    // 総合テスト２（4ゲーム）
+    {id:'spp2-1', name:'カラータイルアタック25', emoji:'🎨', color:'#3B82F6', light:'#DBEAFE', course:'総合テスト２'},
+    {id:'spp2-2', name:'頭元気チェックver2',     emoji:'🧠', color:'#22C55E', light:'#DCFCE7', course:'総合テスト２'},
+    {id:'spp2-3', name:'数字当てパズルver3',     emoji:'🔢', color:'#14B8A6', light:'#CCFBF1', course:'総合テスト２'},
+    {id:'spp2-4', name:'認知症リスク問診票',     emoji:'📝', color:'#F59E0B', light:'#FEF3C7', course:'総合テスト２'},
+  ]
+};
+
+// ── ストレージキー ──
+const STORAGE_KEY = 'nokatsu_admin_urls';
+
+// ── URL読み込み ──
+function loadUrls() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch(e) { return {}; }
+}
+
+function saveUrls(urls) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(urls));
+}
+
+// ── トレーニングセクション生成 ──
+function buildTrainingSections() {
+  const urls = loadUrls();
+  const names = JSON.parse(localStorage.getItem('nokatsu_admin_names') || '{}');
+  const container = document.getElementById('training-sections');
+  container.innerHTML = '';
+
+  Object.entries(MASTER.training).forEach(([key, cfg]) => {
+    const section = document.createElement('div');
+    section.style.marginBottom = '20px';
+    section.innerHTML = `
+      <div class="card">
+        <div class="card-header" style="background:${cfg.bg};">
+          <div class="card-header-title" style="color:${cfg.color};">
+            <span>${cfg.emoji}</span> ${cfg.label}トレーニング
+          </div>
+          <span class="badge badge-cat">10ゲーム枠</span>
+        </div>
+        <div class="card-body">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:40px;">#</th>
+                <th style="width:240px;">ゲーム名</th>
+                <th>URL（空欄=準備中）</th>
+                <th style="width:80px;">状態</th>
+                <th style="width:140px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-${key}"></tbody>
+          </table>
+        </div>
+      </div>`;
+    container.appendChild(section);
+
+    const tbody = document.getElementById('tbody-' + key);
+    cfg.items.forEach((item, i) => {
+      const url = urls[item.id] || '';
+      const tr = document.createElement('tr');
+      const isBlank = !item.name;
+      tr.style.opacity = isBlank ? '0.55' : '1';
+      tr.innerHTML = `
+        <td style="color:var(--muted);font-weight:700;font-size:13px;">${i+1}</td>
+        <td>
+          <div class="game-name-wrap">
+            <div class="game-emoji-badge" style="background:${isBlank ? '#F3F4F6' : cfg.bg};">${isBlank ? '＋' : item.emoji}</div>
+            <div>
+              ${isBlank
+                ? `<input type="text" class="url-input ${names[item.id]?'has-url':''}" id="name-${item.id}" value="${names[item.id]||''}" placeholder="ゲーム名を入力..." style="font-size:14px;margin-bottom:4px;" oninput="onNameInput(this)">`
+                : `<div class="game-name-text">${item.name}</div>`}
+              <div class="game-name-sub">ID: ${item.id}</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <input type="url" class="url-input ${url ? 'has-url' : 'empty'}"
+            id="url-${item.id}" value="${url}"
+            placeholder="${isBlank ? 'URLを入力するとポータルに追加されます' : 'https://example.bolt.host/'}"
+            oninput="onUrlInput(this)">
+        </td>
+        <td>
+          <span class="badge ${url ? 'badge-active' : (isBlank ? 'badge-blank' : 'badge-empty')}" id="badge-${item.id}">
+            ${url ? '✓ 設定済' : (isBlank ? '空き' : '準備中')}
+          </span>
+        </td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-action btn-clear" onclick="clearUrl('${item.id}')" title="URLをクリア">✕</button>
+            <button class="btn-action btn-test" onclick="testUrl('${item.id}')" title="URLをテスト" ${!url ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''}>▶ 確認</button>
+          </div>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  });
+}
+
+// ── 総合テストセクション ──
+function buildCompSection() {
+  const urls = loadUrls();
+  const tbody = document.getElementById('comp-tbody');
+  tbody.innerHTML = '';
+  let prevCourse = '';
+  MASTER.comp.forEach((item, i) => {
+    const url = urls[item.id] || '';
+    // コース区切り行
+    if (item.course !== prevCourse) {
+      const divTr = document.createElement('tr');
+      const courseColor = item.course === '総合テスト１' ? '#16A34A' : '#2563EB';
+      const courseBg = item.course === '総合テスト１' ? '#DCFCE7' : '#DBEAFE';
+      divTr.innerHTML = `<td colspan="5" style="background:${courseBg};padding:10px 16px;font-size:14px;font-weight:900;color:${courseColor};letter-spacing:0.04em;">📋 ${item.course}</td>`;
+      tbody.appendChild(divTr);
+      prevCourse = item.course;
+    }
+    const tr = document.createElement('tr');
+    const seq = (i % 4) + 1;
+    tr.innerHTML = `
+      <td style="color:var(--muted);font-weight:700;font-size:13px;">${seq}</td>
+      <td>
+        <div class="game-name-wrap">
+          <div class="game-emoji-badge" style="background:${item.light};">${item.emoji}</div>
+          <div>
+            <div class="game-name-text">${item.name}</div>
+            <div class="game-name-sub">ID: ${item.id}</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <input type="url" class="url-input ${url ? 'has-url' : 'empty'}"
+          id="url-${item.id}" value="${url}"
+          placeholder="https://example.bolt.host/"
+          oninput="onUrlInput(this)">
+      </td>
+      <td>
+        <span class="badge ${url ? 'badge-active' : 'badge-empty'}" id="badge-${item.id}">
+          ${url ? '✓ 設定済' : '準備中'}
+        </span>
+      </td>
+      <td>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-action btn-clear" onclick="clearUrl('${item.id}')">✕</button>
+          <button class="btn-action btn-test" onclick="testUrl('${item.id}')" ${!url ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''}>▶ 確認</button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── 名前入力ハンドラ（空き枠用） ──
+function onNameInput(input) {
+  // 名前はlocalStorageに別途保存
+  const id = input.id.replace('name-', '');
+  const names = JSON.parse(localStorage.getItem('nokatsu_admin_names') || '{}');
+  if (input.value.trim()) names[id] = input.value.trim();
+  else delete names[id];
+  localStorage.setItem('nokatsu_admin_names', JSON.stringify(names));
+}
+
+// ── URL入力ハンドラ ──
+function onUrlInput(input) {
+  const id = input.id.replace('url-', '');
+  const val = input.value.trim();
+  input.className = 'url-input ' + (val ? 'has-url' : 'empty');
+  const badge = document.getElementById('badge-' + id);
+  if (badge) {
+    badge.className = 'badge ' + (val ? 'badge-active' : 'badge-empty');
+    badge.textContent = val ? '✓ 設定済' : '準備中';
+  }
+  updateStats();
+}
+
+// ── URLクリア ──
+function clearUrl(id) {
+  const input = document.getElementById('url-' + id);
+  if (input) { input.value = ''; onUrlInput(input); }
+}
+
+// ── URLテスト ──
+function testUrl(id) {
+  const input = document.getElementById('url-' + id);
+  if (!input || !input.value.trim()) { showToast('URLが設定されていません', 'error'); return; }
+  window.open(input.value.trim(), '_blank');
+}
+
+// ── 全て保存 ──
+function saveAll() {
+  const urls = {};
+  document.querySelectorAll('.url-input').forEach(input => {
+    const id = input.id.replace('url-', '');
+    const val = input.value.trim();
+    if (val) urls[id] = val;
+  });
+  saveUrls(urls);
+  updateStats();
+  showToast('✓ 保存しました！ポータルに反映されます', 'success');
+}
+
+// ── 統計更新 ──
+function updateStats() {
+  let total = 0, active = 0;
+  document.querySelectorAll('.url-input').forEach(input => {
+    total++;
+    if (input.value.trim()) active++;
+  });
+  document.getElementById('stat-total').textContent  = total;
+  document.getElementById('stat-active').textContent = active;
+  document.getElementById('stat-empty').textContent  = total - active;
+}
+
+// ── エクスポート ──
+function exportData() {
+  const urls = loadUrls();
+  const blob = new Blob([JSON.stringify(urls, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'nokatsu_urls_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showToast('📤 エクスポートしました', 'success');
+}
+
+// ── インポート ──
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      saveUrls(data);
+      buildTrainingSections();
+      buildCompSection();
+      updateStats();
+      showToast('📥 インポートしました', 'success');
+    } catch(err) {
+      showToast('JSONファイルが無効です', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ── リセット ──
+function resetAll() {
+  if (!confirm('全てのURL設定をリセットしますか？\nこの操作は元に戻せません。')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  buildTrainingSections();
+  buildCompSection();
+  updateStats();
+  showToast('🗑️ リセットしました', 'success');
+}
+
+// ── タブ切り替え ──
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const tabs = ['tab-training','tab-comp','tab-settings'];
+  const idx = tabs.indexOf(id);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// ── トースト ──
+let toastTimer;
+function showToast(msg, type='success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 2800);
+}
+
+// ── 初期化 ──
+buildTrainingSections();
+buildCompSection();
+updateStats();
+</script>
+</body>
+</html>
