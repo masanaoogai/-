@@ -1,387 +1,368 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#1a7a40">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="screen-orientation" content="landscape">
-  <meta name="apple-mobile-web-app-title" content="まいにち脳活">
-  <meta name="description" content="毎日3分で脳を元気に。認知機能を楽しく続けやすく。">
-  <title>まいにち脳活</title>
-  <!-- Supabase は動的にロード（失敗してもゲストモードで動作） -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#22C55E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="まいにち脳活">
+<title>まいにち脳活</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script src="config.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Meiryo',sans-serif;background:#FFFBF0}
+.page{display:none;width:100vw;height:100vh;flex-direction:column;overflow:hidden}
+.page.active{display:flex}
 
-  <meta name="theme-color" content="#22C55E">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="screen-orientation" content="landscape">
-  <meta name="apple-mobile-web-app-title" content="まいにち脳活">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-    html, body { width:100%; height:100%; overflow:hidden; background:#1a7a40; }
-    body { font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Meiryo',sans-serif; }
-
-    .page { display:none; width:100vw; height:100vh; flex-direction:column; overflow:hidden; }
-    .page.active { display:flex; }
-
-    .hdr { display:flex; align-items:center; justify-content:space-between; background:#1a7a40; padding:0 32px; height:72px; flex-shrink:0; }
-    .hdr-logo { display:flex; align-items:center; gap:12px; }
-    .hdr-logo-icon { font-size:32px; }
-    .hdr-logo-text { font-size:28px; font-weight:900; color:#fff; letter-spacing:0.05em; }
-    .hdr-back { display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.18); border:2px solid rgba(255,255,255,0.5); border-radius:14px; padding:10px 22px; color:#fff; font-size:22px; font-weight:900; cursor:pointer; transition:background 0.15s; }
-    .hdr-back:hover { background:rgba(255,255,255,0.28); }
-    .hdr-right { width:140px; }
-
-    .body { flex:1; overflow:hidden; background:#f4f7f4; display:flex; flex-direction:column; }
-    .ftr { height:44px; background:#1a7a40; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .ftr span { color:rgba(255,255,255,0.65); font-size:16px; font-weight:500; }
-
-    .btn { border:none; border-radius:18px; cursor:pointer; font-weight:900; transition:transform 0.1s, box-shadow 0.1s; display:flex; align-items:center; justify-content:center; }
-    .btn:active { transform:scale(0.96); }
-    .btn-green { background:#1a7a40; color:#fff; box-shadow:0 5px 0 #0d5a2c; }
-    .btn-green:hover { background:#15803D; }
-    .btn-green:active { box-shadow:0 2px 0 #0d5a2c; transform:translateY(3px); }
-    .btn-green:disabled { background:#9CA3AF; box-shadow:0 5px 0 #6B7280; cursor:not-allowed; }
-
-    #page-top .body { display:flex; flex-direction:row; align-items:stretch; }
-    .top-left { width:42%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:32px; background:#fff; border-right:3px solid #e0ede6; }
-    .top-title { text-align:center; }
-    .top-title h1 { font-size:44px; font-weight:900; color:#111; line-height:1.2; }
-    .top-title p { font-size:20px; color:#555; margin-top:10px; font-weight:600; }
-    .top-start-btn { font-size:36px; padding:22px 0; width:280px; letter-spacing:0.15em; }
-    .top-hint { font-size:18px; color:#888; font-weight:600; }
-    .top-right { flex:1; display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(2,1fr); gap:12px; padding:20px; background:#f4f7f4; align-content:center; }
-    .skill-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; border-radius:18px; border:3px solid transparent; cursor:pointer; transition:transform 0.12s, box-shadow 0.12s; padding:16px 8px; background:#fff; }
-    .skill-btn:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.1); }
-    .skill-icon { width:56px; height:56px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:28px; }
-    .skill-label { font-size:20px; font-weight:900; }
-
-    #page-menu .body { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:14px; padding:18px 24px; }
-    .menu-card { display:flex; align-items:center; gap:20px; background:#fff; border-radius:20px; border:3px solid #ddd; padding:20px 28px; cursor:pointer; text-align:left; transition:transform 0.12s, box-shadow 0.12s; }
-    .menu-card:hover { transform:translateY(-3px); box-shadow:0 10px 28px rgba(0,0,0,0.1); }
-    .menu-card:active { transform:scale(0.98); }
-    .menu-card.featured { border-color:#1a7a40; background:linear-gradient(135deg,#fff 50%,#f0fdf4 100%); }
-    .menu-card.disabled { opacity:0.5; cursor:default; }
-    .menu-card-icon { width:72px; height:72px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:36px; flex-shrink:0; }
-    .menu-card-text { flex:1; }
-    .menu-card-title { font-size:28px; font-weight:900; color:#111; }
-    .menu-card-sub { font-size:18px; color:#555; font-weight:700; margin-top:4px; }
-    .menu-card-desc { font-size:16px; color:#888; margin-top:4px; }
-    .menu-card-arrow { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:900; color:#fff; flex-shrink:0; }
-    .menu-badge { display:inline-block; padding:4px 14px; border-radius:100px; font-size:14px; font-weight:900; margin-top:6px; }
-
-    #page-comp .body { display:flex; flex-direction:column; padding:16px 24px; gap:12px; }
-    .comp-grid { flex:1; display:grid; grid-template-columns:repeat(4,1fr); gap:10px; overflow:hidden; }
-    .comp-card { display:flex; flex-direction:column; gap:8px; background:#fff; border-radius:16px; border:3px solid #e5e7eb; padding:14px 16px; cursor:pointer; transition:transform 0.12s; }
-    .comp-card:hover { transform:translateY(-2px); }
-    .comp-card-top { display:flex; align-items:center; gap:10px; }
-    .comp-check { width:28px; height:28px; border-radius:8px; border:3px solid #D1D5DB; background:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:#fff; flex-shrink:0; }
-    .comp-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
-    .comp-name { font-size:15px; font-weight:900; color:#111; line-height:1.3; }
-    .comp-cat { font-size:12px; font-weight:700; padding:2px 9px; border-radius:100px; }
-    .comp-bar { display:flex; align-items:center; justify-content:space-between; background:#fff; border-radius:14px; border:2px solid #e5e7eb; padding:12px 20px; flex-shrink:0; }
-
-    #page-tr-select .body { display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:1fr 1fr; gap:12px; padding:18px 24px; }
-    .tr-card { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:#fff; border-radius:20px; border:3px solid #ddd; cursor:pointer; transition:transform 0.12s, box-shadow 0.12s; padding:16px; }
-    .tr-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.1); }
-    .tr-card-icon { width:64px; height:64px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:32px; }
-    .tr-card-label { font-size:24px; font-weight:900; }
-    .tr-card-sub { font-size:14px; color:#888; font-weight:600; }
-
-    .tr-detail-body { flex:1; overflow:hidden; display:flex; flex-direction:column; gap:12px; padding:16px 24px; background:#f4f7f4; }
-    .tr-detail-grid { flex:1; display:grid; grid-template-columns:1fr 1fr; gap:10px; overflow:hidden; }
-    .tr-item { display:flex; align-items:center; gap:14px; background:#fff; border-radius:16px; border:3px solid #e5e7eb; padding:16px 20px; cursor:pointer; transition:transform 0.12s; }
-    .tr-item:hover:not(.empty) { transform:translateY(-2px); }
-    .tr-item.empty { opacity:0.35; cursor:default; }
-    .tr-item-check { width:32px; height:32px; border-radius:9px; border:3px solid #D1D5DB; background:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:900; color:#fff; flex-shrink:0; }
-    .tr-item-emoji { font-size:30px; }
-    .tr-item-name { font-size:20px; font-weight:900; flex:1; }
-    .tr-item-tag { font-size:12px; font-weight:700; padding:3px 10px; border-radius:100px; margin-left:auto; }
-
-    #page-progress .body { display:flex; flex-direction:column; gap:12px; padding:16px 24px; background:#f4f7f4; }
-    .prog-summary { background:#fff; border-radius:16px; border:2px solid #e5e7eb; padding:16px 24px; display:flex; align-items:center; gap:24px; flex-shrink:0; }
-    .prog-summary-num { font-size:36px; font-weight:900; color:#111; }
-    .prog-summary-label { font-size:16px; color:#888; font-weight:600; }
-    .prog-bar-wrap { flex:1; }
-    .prog-bar-bg { height:14px; background:#e5e7eb; border-radius:100px; overflow:hidden; }
-    .prog-bar-fill { height:100%; background:#1a7a40; border-radius:100px; transition:width 0.4s; }
-    .prog-bar-pct { font-size:16px; font-weight:900; color:#1a7a40; text-align:right; margin-top:4px; }
-    .prog-list { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
-    .prog-row { display:flex; align-items:center; gap:16px; background:#fff; border-radius:16px; border:3px solid #e5e7eb; padding:16px 20px; }
-    .prog-row.current { border-color:#f97316; background:#fffbf5; }
-    .prog-row.done { border-color:#86efac; background:#f0fdf4; }
-    .prog-row.locked { opacity:0.4; }
-    .prog-badge { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:900; color:#fff; flex-shrink:0; }
-    .prog-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
-    .prog-name { font-size:20px; font-weight:900; color:#111; }
-    .prog-status { font-size:15px; font-weight:700; margin-top:3px; }
-    .prog-btns { display:flex; gap:8px; flex-shrink:0; }
-    .btn-start { background:#3B82F6; color:#fff; border:none; border-radius:12px; padding:12px 22px; font-size:18px; font-weight:900; cursor:pointer; }
-    .btn-done-sm { background:#fff; color:#1a7a40; border:3px solid #86efac; border-radius:12px; padding:12px 22px; font-size:18px; font-weight:900; cursor:pointer; }
-    .prog-complete { display:none; background:linear-gradient(135deg,#dcfce7,#bbf7d0); border:3px solid #86efac; border-radius:18px; padding:24px; text-align:center; flex-direction:column; gap:12px; align-items:center; }
-    .prog-complete.show { display:flex; }
-
-    #page-coming .body { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; background:linear-gradient(160deg,#eff6ff,#dbeafe); }
-  </style>
-
-  <!-- UD設定スタイル -->
-  <style id="ud-styles">
-    /* ── 文字サイズ ── */
-    body.ud-font-large  { font-size: 120%; }
-    body.ud-font-xlarge { font-size: 145%; }
-
-    /* ── 白黒反転（ハイコントラスト） ── */
-    body.ud-invert {
-      filter: invert(1) hue-rotate(180deg);
-    }
-    body.ud-invert img,
-    body.ud-invert video,
-    body.ud-invert iframe {
-      filter: invert(1) hue-rotate(180deg); /* 画像・動画は再反転して元の色に */
-    }
-
-    /* ── グレースケール ── */
-    body.ud-grayscale {
-      filter: grayscale(1);
-    }
-
-    /* ── ダークモード ── */
-    body.ud-dark {
-      background: #121212 !important;
-      color: #E5E5E5 !important;
-    }
-    body.ud-dark .body       { background: #1E1E1E !important; }
-    body.ud-dark .menu-card  { background: #2A2A2A !important; border-color: #444 !important; color: #E5E5E5 !important; }
-    body.ud-dark .menu-card-title { color: #F5F5F5 !important; }
-    body.ud-dark .menu-card-sub   { color: #AAAAAA !important; }
-    body.ud-dark .menu-card-desc  { color: #888888 !important; }
-    body.ud-dark .tr-item    { background: #2A2A2A !important; border-color: #444 !important; }
-    body.ud-dark .tr-name    { color: #E5E5E5 !important; }
-    body.ud-dark .prog-row   { background: #2A2A2A !important; border-color: #444 !important; }
-    body.ud-dark .prog-name  { color: #E5E5E5 !important; }
-    body.ud-dark .comp-card  { background: #2A2A2A !important; border-color: #444 !important; }
-    body.ud-dark .comp-name  { color: #E5E5E5 !important; }
-    body.ud-dark .hdr        { box-shadow: none !important; }
-    body.ud-dark #page-top   { background: #121212 !important; }
-
-    /* ── ボタン枠を強調 ── */
-    body.ud-border .menu-card  { border-width: 5px !important; }
-    body.ud-border .tr-item    { border-width: 5px !important; }
-    body.ud-border .btn-green  { outline: 4px solid #fff !important; outline-offset: 3px; }
-    body.ud-border .hdr-back   { border: 3px solid rgba(255,255,255,0.8) !important; }
-    body.ud-border .tr-sel-btn { border-width: 5px !important; }
-
-    /* ── 行間を広げる ── */
-    body.ud-linespace * { line-height: 1.9 !important; letter-spacing: 0.06em !important; }
-
-    /* ── アニメーション停止 ── */
-    body.ud-no-anim * {
-      transition: none !important;
-      animation: none !important;
-    }
-
-    /* ── カーソル拡大 ── */
-    body.ud-cursor * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M8 2 L8 26 L14 20 L18 28 L21 27 L17 19 L25 19 Z' fill='black' stroke='white' stroke-width='2'/%3E%3C/svg%3E") 0 0, auto !important; }
-  </style>
-
-  /* ── UD設定ページ共通スタイル ── */
-  .ud-sec {
-    background:#fff; border-radius:18px; border:2px solid #E2E8F0;
-    padding:20px 24px; display:flex; flex-direction:column; gap:14px;
-  }
-  .ud-sec-title {
-    font-size:22px; font-weight:900; color:#1E293B;
-    padding-bottom:10px; border-bottom:2px solid #F1F5F9;
-  }
-  .ud-btn-row { display:flex; gap:12px; flex-wrap:wrap; }
-  .ud-cbtn {
-    display:flex; flex-direction:column; align-items:center; gap:8px;
-    background:#F8FAFC; border:3px solid #E2E8F0; border-radius:16px;
-    padding:16px 24px; cursor:pointer; font-size:17px; font-weight:700;
-    color:#475569; min-width:110px; transition:all 0.15s;
-  }
-  .ud-cbtn.active { background:#DCFCE7; border-color:#16A34A; color:#15803D; }
-  .ud-cbtn:hover  { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.1); }
-  .ud-cbtn.ud-sm  { min-width:90px; padding:12px 16px; }
-
-  .ud-trow {
-    display:flex; align-items:center; justify-content:space-between;
-    background:#F8FAFC; border-radius:14px; padding:16px 20px;
-    border:1.5px solid #E2E8F0; gap:20px;
-  }
-  .ud-tinfo { flex:1; }
-  .ud-tlabel { font-size:20px; font-weight:900; color:#1E293B; }
-  .ud-tdesc  { font-size:15px; color:#64748B; margin-top:4px; font-weight:500; }
-
-  .ud-tog {
-    width:64px; height:34px; border-radius:100px; border:none; cursor:pointer;
-    background:#CBD5E1; position:relative; transition:background 0.2s;
-    flex-shrink:0;
-  }
-  .ud-tog[aria-checked="true"] { background:#16A34A; }
-  .ud-knob {
-    position:absolute; top:4px; left:4px;
-    width:26px; height:26px; background:#fff; border-radius:50%;
-    transition:transform 0.2s; box-shadow:0 2px 6px rgba(0,0,0,0.2);
-  }
-  .ud-tog[aria-checked="true"] .ud-knob { transform:translateX(30px); }
-
+/* ── UD ── */
+body.ud-font-large{font-size:120%}
+body.ud-font-xlarge{font-size:145%}
+body.ud-invert{filter:invert(1) hue-rotate(180deg)}
+body.ud-invert img,body.ud-invert iframe{filter:invert(1) hue-rotate(180deg)}
+body.ud-grayscale{filter:grayscale(1)}
+body.ud-dark{background:#121212!important}
+body.ud-dark .page{background:#1a1a1a!important}
+body.ud-border button{outline:3px solid currentColor!important;outline-offset:2px}
+body.ud-linespace *{line-height:2!important;letter-spacing:0.06em!important}
+body.ud-no-anim *{transition:none!important;animation:none!important}
+.ud-sec{background:#fff;border-radius:14px;border:2px solid #E2E8F0;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.ud-sec-title{font-size:18px;font-weight:900;color:#1E293B;padding-bottom:8px;border-bottom:2px solid #F1F5F9}
+.ud-btn-row{display:flex;gap:12px;flex-wrap:wrap}
+.ud-cbtn{display:flex;flex-direction:column;align-items:center;gap:6px;background:#F8FAFC;border:2px solid #E2E8F0;border-radius:12px;padding:10px 16px;cursor:pointer;font-size:14px;font-weight:700;color:#475569;min-width:80px;transition:all 0.15s;font-family:inherit}
+.ud-cbtn.active{background:#DCFCE7;border-color:#16A34A;color:#15803D}
+.ud-cbtn.ud-sm{min-width:90px;padding:12px 16px}
+.ud-trow{display:flex;align-items:center;justify-content:space-between;background:#F8FAFC;border-radius:10px;padding:10px 14px;border:1.5px solid #E2E8F0;gap:16px}
+.ud-tinfo{flex:1}
+.ud-tlabel{font-size:16px;font-weight:900;color:#1E293B}
+.ud-tdesc{font-size:12px;color:#64748B;margin-top:2px;font-weight:500}
+.ud-tog{width:64px;height:34px;border-radius:100px;border:none;cursor:pointer;background:#CBD5E1;position:relative;transition:background 0.2s;flex-shrink:0}
+.ud-tog[aria-checked="true"]{background:#16A34A}
+.ud-knob{position:absolute;top:4px;left:4px;width:26px;height:26px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 2px 6px rgba(0,0,0,0.2)}
+.ud-tog[aria-checked="true"] .ud-knob{transform:translateX(30px)}
+</style>
 </head>
 <body>
 
-
-
-<!-- ═══ ログインページ ═══ -->
-<div class="page active" id="page-login" style="background:linear-gradient(160deg,#FFFBF0 0%,#F0FFF4 50%,#FFFBF0 100%);">
-  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:20px;">
-
-    <div style="text-align:center;margin-bottom:28px;">
-      <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:8px;">
-        <span style="font-size:48px;">🧠</span>
-        <h1 style="font-size:56px;font-weight:900;color:#1F2937;letter-spacing:0.05em;">まいにち脳活</h1>
-        <span style="font-size:48px;">🌿</span>
+<!-- ═══ TOP ═══ -->
+<div class="page active" id="page-top" style="background:linear-gradient(160deg,#FFFBF0 0%,#F0FFF4 50%,#FFFBF0 100%)">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+        <span style="font-size:clamp(32px,5vw,48px)">🧠</span>
+        <h1 style="font-size:clamp(48px,8vw,80px);font-weight:900;color:#1F2937;letter-spacing:0.05em;line-height:1.1;text-shadow:0 4px 16px rgba(0,0,0,0.08)">まいにち脳活</h1>
+        <span style="font-size:clamp(32px,5vw,48px)">🌿</span>
       </div>
-      <p style="font-size:20px;color:#6B7280;letter-spacing:0.1em;">Presented by D&amp;P Media</p>
+      <p style="color:#6B7280;font-size:24px;letter-spacing:0.12em">Presented by D&amp;P Media</p>
     </div>
-
-    <!-- ログインカード -->
-    <div id="login-card" style="background:#fff;border-radius:24px;border:2px solid #E5E7EB;padding:36px 44px;width:100%;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,0.08);display:flex;flex-direction:column;gap:20px;">
-
-      <!-- タブ -->
-      <div style="display:flex;background:#F3F4F6;border-radius:14px;padding:4px;gap:4px;">
-        <button id="tab-signin" onclick="switchAuthTab('signin')" style="flex:1;padding:12px;border:none;border-radius:11px;font-size:18px;font-weight:900;cursor:pointer;background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,0.1);">ログイン</button>
-        <button id="tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:12px;border:none;border-radius:11px;font-size:18px;font-weight:900;cursor:pointer;background:none;color:#9CA3AF;">新規登録</button>
-      </div>
-
-      <!-- ログイン -->
-      <div id="form-signin" style="display:flex;flex-direction:column;gap:14px;">
-        <div>
-          <label style="font-size:16px;font-weight:700;color:#374151;display:block;margin-bottom:6px;">メールアドレス</label>
-          <input id="si-email" type="email" placeholder="example@email.com"
-            style="width:100%;border:2px solid #E5E7EB;border-radius:12px;padding:14px 18px;font-size:18px;font-family:inherit;outline:none;transition:border-color 0.15s;"
-            onfocus="this.style.borderColor='#22C55E'" onblur="this.style.borderColor='#E5E7EB'">
-        </div>
-        <div>
-          <label style="font-size:16px;font-weight:700;color:#374151;display:block;margin-bottom:6px;">パスワード</label>
-          <input id="si-pass" type="password" placeholder="パスワードを入力"
-            style="width:100%;border:2px solid #E5E7EB;border-radius:12px;padding:14px 18px;font-size:18px;font-family:inherit;outline:none;transition:border-color 0.15s;"
-            onfocus="this.style.borderColor='#22C55E'" onblur="this.style.borderColor='#E5E7EB'"
-            onkeydown="if(event.key==='Enter')doSignIn()">
-        </div>
-        <div id="si-error" style="display:none;color:#EF4444;font-size:15px;font-weight:700;padding:10px 14px;background:#FEF2F2;border-radius:10px;"></div>
-        <button onclick="doSignIn()" style="background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);color:#fff;border:none;border-radius:14px;padding:16px;font-size:22px;font-weight:900;cursor:pointer;letter-spacing:0.08em;box-shadow:0 4px 16px rgba(34,197,94,0.4);">ログイン</button>
-        <button onclick="doGuestLogin()" style="background:#F8FAFC;color:#64748B;border:2px solid #E2E8F0;border-radius:14px;padding:14px;font-size:18px;font-weight:700;cursor:pointer;">ゲストとして使う（登録なし）</button>
-      </div>
-
-      <!-- 新規登録 -->
-      <div id="form-signup" style="display:none;flex-direction:column;gap:14px;">
-        <div>
-          <label style="font-size:16px;font-weight:700;color:#374151;display:block;margin-bottom:6px;">お名前（ニックネーム）</label>
-          <input id="su-name" type="text" placeholder="例：山田 太郎"
-            style="width:100%;border:2px solid #E5E7EB;border-radius:12px;padding:14px 18px;font-size:18px;font-family:inherit;outline:none;transition:border-color 0.15s;"
-            onfocus="this.style.borderColor='#22C55E'" onblur="this.style.borderColor='#E5E7EB'">
-        </div>
-        <div>
-          <label style="font-size:16px;font-weight:700;color:#374151;display:block;margin-bottom:6px;">メールアドレス</label>
-          <input id="su-email" type="email" placeholder="example@email.com"
-            style="width:100%;border:2px solid #E5E7EB;border-radius:12px;padding:14px 18px;font-size:18px;font-family:inherit;outline:none;transition:border-color 0.15s;"
-            onfocus="this.style.borderColor='#22C55E'" onblur="this.style.borderColor='#E5E7EB'">
-        </div>
-        <div>
-          <label style="font-size:16px;font-weight:700;color:#374151;display:block;margin-bottom:6px;">パスワード（6文字以上）</label>
-          <input id="su-pass" type="password" placeholder="パスワードを設定"
-            style="width:100%;border:2px solid #E5E7EB;border-radius:12px;padding:14px 18px;font-size:18px;font-family:inherit;outline:none;transition:border-color 0.15s;"
-            onfocus="this.style.borderColor='#22C55E'" onblur="this.style.borderColor='#E5E7EB'">
-        </div>
-        <div id="su-error" style="display:none;color:#EF4444;font-size:15px;font-weight:700;padding:10px 14px;background:#FEF2F2;border-radius:10px;"></div>
-        <div id="su-success" style="display:none;color:#16A34A;font-size:15px;font-weight:700;padding:10px 14px;background:#DCFCE7;border-radius:10px;"></div>
-        <button onclick="doSignUp()" style="background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%);color:#fff;border:none;border-radius:14px;padding:16px;font-size:22px;font-weight:900;cursor:pointer;letter-spacing:0.08em;box-shadow:0 4px 16px rgba(59,130,246,0.4);">新規登録</button>
-      </div>
-
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+      <p style="color:#4B5563;font-size:clamp(18px,2.5vw,24px);font-weight:500">今日も元気に、脳を動かしましょう！</p>
+      <button onclick="go('page-menu')" style="font-size:clamp(28px,4vw,42px);font-weight:900;color:#fff;border:none;cursor:pointer;padding:clamp(14px,2vh,22px) clamp(48px,8vw,96px);border-radius:20px;background:linear-gradient(135deg,#22C55E 0%,#16A34A 100%);box-shadow:0 8px 32px rgba(34,197,94,0.45);letter-spacing:0.15em;transition:all 0.2s" onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 12px 40px rgba(34,197,94,0.55)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 8px 32px rgba(34,197,94,0.45)'">ス タ ー ト</button>
+      <p style="color:#9CA3AF;font-size:clamp(14px,1.8vw,18px)">タップしてはじめましょう</p>
     </div>
   </div>
-  <div style="text-align:center;padding:14px;color:#9CA3AF;font-size:14px;">© D&amp;P Media — まいにち脳活</div>
+  <div style="display:flex;justify-content:center;gap:16px;padding:6px 16px 16px;flex-shrink:0">
+    <button onclick="go('page-tr-obs')" class="skill-pill"><div style="width:44px;height:44px;border-radius:50%;background:#DBEAFE;display:flex;align-items:center;justify-content:center;font-size:22px">👀</div><span style="font-size:13px;color:#6B7280;font-weight:500">観察力</span></button>
+    <button onclick="go('page-tr-calc')" class="skill-pill"><div style="width:44px;height:44px;border-radius:50%;background:#D1FAE5;display:flex;align-items:center;justify-content:center;font-size:22px">🔢</div><span style="font-size:13px;color:#6B7280;font-weight:500">計算力</span></button>
+    <button onclick="go('page-tr-int')" class="skill-pill"><div style="width:44px;height:44px;border-radius:50%;background:#FCE7F3;display:flex;align-items:center;justify-content:center;font-size:22px">✨</div><span style="font-size:13px;color:#6B7280;font-weight:500">直感力</span></button>
+    <button onclick="go('page-tr-jud')" class="skill-pill"><div style="width:44px;height:44px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:22px">⚖️</div><span style="font-size:13px;color:#6B7280;font-weight:500">判断力</span></button>
+    <button onclick="go('page-tr-mem')" class="skill-pill"><div style="width:44px;height:44px;border-radius:50%;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:22px">🧠</div><span style="font-size:13px;color:#6B7280;font-weight:500">記憶力</span></button>
+    <button onclick="go('page-tr-react')" class="skill-pill"><div style="width:44px;height:44px;border-radius:50%;background:#FEE2E2;display:flex;align-items:center;justify-content:center;font-size:22px">⚡</div><span style="font-size:13px;color:#6B7280;font-weight:500">反応力</span></button>
+    <button onclick="go('page-tr-know')" class="skill-pill"><div style="width:44px;height:44px;border-radius:50%;background:#E0E7FF;display:flex;align-items:center;justify-content:center;font-size:22px">📚</div><span style="font-size:13px;color:#6B7280;font-weight:500">知力</span></button>
+  </div>
 </div>
 
-<div class="page" id="page-top">
-  <div class="hdr">
-    <div class="hdr-logo"><span class="hdr-logo-icon">🧠</span><span class="hdr-logo-text">まいにち脳活</span></div>
-    <span style="color:rgba(255,255,255,0.7);font-size:16px;letter-spacing:0.08em;">Presented by D&amp;P Media</span>
-  </div>
-  <div class="body">
-    <div class="top-left">
-      <div class="top-title">
-        <h1>今日も一緒に<br>脳を動かそう！</h1>
-        <p>毎日続けて、元気な頭に</p>
+<!-- ═══ MENU ═══ -->
+<div class="page" id="page-menu" style="background:#FFFBF0">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:0 24px;min-height:60px;background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);box-shadow:0 4px 20px rgba(22,163,74,0.3);flex-shrink:0">
+    <button onclick="go('page-top')" style="display:flex;align-items:center;gap:8px;background:none;border:none;color:#fff;font-size:20px;font-weight:700;cursor:pointer;font-family:inherit">‹ 戻る</button>
+    <div style="display:flex;align-items:center;gap:10px"><span style="font-size:28px">🧠</span><span style="font-size:28px;font-weight:900;color:#fff;letter-spacing:0.08em">まいにち脳活</span></div>
+    <div style="width:100px"></div>
+  </header>
+
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:12px 48px;gap:12px">
+    <p style="text-align:center;color:#374151;font-weight:700;font-size:22px;margin-bottom:4px">やりたいメニューを選んでください</p>
+
+    <!-- ① 総合コース（基本概要） -->
+    <button onclick="startCourse('spp1')" style="display:flex;align-items:center;gap:20px;background:#F0FDF4;border:2.5px solid #22C55E;border-radius:18px;padding:18px 24px;cursor:pointer;box-shadow:0 3px 12px rgba(34,197,94,0.12);transition:transform 0.15s,box-shadow 0.15s;text-align:left;font-family:inherit;width:100%" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(34,197,94,0.2)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 3px 12px rgba(34,197,94,0.12)'">
+      <span style="font-size:44px;line-height:1;flex-shrink:0">📋</span>
+      <div style="flex:1">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font-size:28px;font-weight:900;color:#1F2937">総合テスト</span>
+          <span style="font-size:18px;font-weight:700;color:#4B5563">（基本概要コース）</span>
+        </div>
+        <div style="font-size:15px;color:#6B7280;margin-top:3px">4つのチェック ／ 約10分</div>
       </div>
-      <button class="btn btn-green top-start-btn" onclick="go('page-menu')">ス タ ー ト</button>
-      <span class="top-hint">ボタンをタップしてください</span>
-    </div>
-    <div class="top-right">
-      <button class="skill-btn" style="border-color:#93C5FD;" onclick="go('page-tr-obs')"><div class="skill-icon" style="background:#DBEAFE;">👀</div><span class="skill-label" style="color:#1D4ED8;">観察力</span></button>
-      <button class="skill-btn" style="border-color:#86EFAC;" onclick="go('page-tr-calc')"><div class="skill-icon" style="background:#D1FAE5;">🔢</div><span class="skill-label" style="color:#166534;">計算力</span></button>
-      <button class="skill-btn" style="border-color:#F9A8D4;" onclick="go('page-tr-int')"><div class="skill-icon" style="background:#FCE7F3;">✨</div><span class="skill-label" style="color:#9D174D;">直感力</span></button>
-      <button class="skill-btn" style="border-color:#C4B5FD;" onclick="go('page-tr-jud')"><div class="skill-icon" style="background:#EDE9FE;">⚖️</div><span class="skill-label" style="color:#5B21B6;">判断力</span></button>
-      <button class="skill-btn" style="border-color:#FDE68A;" onclick="go('page-tr-mem')"><div class="skill-icon" style="background:#FEF3C7;">🧠</div><span class="skill-label" style="color:#92400E;">記憶力</span></button>
-      <button class="skill-btn" style="border-color:#FCA5A5;" onclick="go('page-tr-react')"><div class="skill-icon" style="background:#FEE2E2;">⚡</div><span class="skill-label" style="color:#991B1B;">反応力</span></button>
-      <button class="skill-btn" style="border-color:#A5B4FC;" onclick="go('page-tr-know')"><div class="skill-icon" style="background:#E0E7FF;">📚</div><span class="skill-label" style="color:#3730A3;">知力</span></button>
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#f9fafb;border-radius:18px;border:3px dashed #86efac;padding:16px 8px;"><span style="font-size:28px;">＋</span><span style="font-size:15px;font-weight:700;color:#aaa;">準備中</span></div>
-    </div>
-  </div>
-  <div class="ftr"><span>まいにち脳活 — D&amp;P Media</span></div>
-</div>
+      <div style="background:#16A34A;color:#fff;padding:8px 18px;border-radius:10px;font-size:16px;font-weight:900;flex-shrink:0;white-space:nowrap">人気のある</div>
+      <div style="background:#22C55E;color:#fff;padding:12px 28px;border-radius:12px;font-size:20px;font-weight:900;flex-shrink:0;letter-spacing:0.05em;box-shadow:0 4px 12px rgba(34,197,94,0.4)">選ぶ→</div>
+    </button>
 
-<div class="page" id="page-menu">
-  <div class="hdr"><button class="hdr-back" onclick="go('page-top')">‹ もどる</button><div class="hdr-logo"><span class="hdr-logo-icon">🧠</span><span class="hdr-logo-text">まいにち脳活</span></div><div class="hdr-right" style="display:flex;align-items:center;justify-content:flex-end;"><button id="account-btn" onclick="showAccountMenu()" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.4);border-radius:12px;padding:7px 14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;"><span id="account-avatar" style="width:28px;height:28px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#16A34A;flex-shrink:0;"></span><span id="account-name" style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span></button></div></div>
-  <div class="body">
-    <button class="menu-card featured" onclick="startCourse('spp1')"><div class="menu-card-icon" style="background:#DCFCE7;">📋</div><div class="menu-card-text"><div class="menu-card-title">総合テスト１</div><div class="menu-card-sub">基本概要コース</div><div class="menu-card-desc">4つのチェック ／ 約10分</div><span class="menu-badge" style="background:#DCFCE7;color:#166534;">人気</span></div><div class="menu-card-arrow" style="background:#1a7a40;">選ぶ →</div></button>
-    <button class="menu-card" onclick="startCourse('spp2')" style="background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);border-color:#2563EB;"><div class="menu-card-icon" style="background:#DBEAFE;">🔬</div><div class="menu-card-text"><div class="menu-card-title">総合テスト２</div><div class="menu-card-sub">詳細調査コース</div><div class="menu-card-desc">4つのチェック ／ 約15分</div><span class="menu-badge" style="background:#DBEAFE;color:#1D4ED8;">くわしく</span></div><div class="menu-card-arrow" style="background:#2563EB;">選ぶ →</div></button>
-    <button class="menu-card" onclick="go('page-tr-select')"><div class="menu-card-icon" style="background:#DBEAFE;">🎮</div><div class="menu-card-text"><div class="menu-card-title">脳を鍛えろ！</div><div class="menu-card-sub">トレーニングゲーム</div><div class="menu-card-desc">毎日の脳トレで元気な頭に</div><span class="menu-badge" style="background:#DBEAFE;color:#1E40AF;">楽しい</span></div><div class="menu-card-arrow" style="background:#3B82F6;">→</div></button>
-    <button class="menu-card" onclick="go('page-settings')" style="background:linear-gradient(135deg,#F8FAFC 0%,#F1F5F9 100%);border-color:#64748B;"><div class="menu-card-icon" style="background:#F1F5F9;">⚙️</div><div class="menu-card-text"><div class="menu-card-title">設定</div><div class="menu-card-sub">表示・音声・操作のカスタマイズ</div><div class="menu-card-desc">見やすさ・使いやすさを調整</div><span class="menu-badge" style="background:#F1F5F9;color:#475569;">UD対応</span></div><div class="menu-card-arrow" style="background:#64748B;">選ぶ →</div></button>
-  </div>
-  <div class="ftr"><span>メニューをタップしてください</span></div>
-</div>
+    <!-- ② 総合コース（詳細調査） -->
+    <button onclick="startCourse('spp2')" style="display:flex;align-items:center;gap:20px;background:#FFF7ED;border:2.5px solid #F97316;border-radius:18px;padding:18px 24px;cursor:pointer;box-shadow:0 3px 12px rgba(249,115,22,0.12);transition:transform 0.15s,box-shadow 0.15s;text-align:left;font-family:inherit;width:100%" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(249,115,22,0.2)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 3px 12px rgba(249,115,22,0.12)'">
+      <span style="font-size:44px;line-height:1;flex-shrink:0">🔬</span>
+      <div style="flex:1">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font-size:28px;font-weight:900;color:#1F2937">総合テスト</span>
+          <span style="font-size:18px;font-weight:700;color:#4B5563">（詳細調査コース）</span>
+        </div>
+        <div style="font-size:15px;color:#6B7280;margin-top:3px">5つのチェック ／ 約20分</div>
+      </div>
+      <div style="background:#EA580C;color:#fff;padding:8px 18px;border-radius:10px;font-size:16px;font-weight:900;flex-shrink:0;white-space:nowrap">くわしく</div>
+      <div style="background:#F97316;color:#fff;padding:12px 28px;border-radius:12px;font-size:20px;font-weight:900;flex-shrink:0;letter-spacing:0.05em;box-shadow:0 4px 12px rgba(249,115,22,0.4)">選ぶ→</div>
+    </button>
 
-<div class="page" id="page-comp">
-  <div class="hdr" id="comp-hdr">
-    <button class="hdr-back" onclick="go('page-menu')">‹ もどる</button>
-    <div class="hdr-logo"><span class="hdr-logo-icon">🧠</span><span class="hdr-logo-text" id="comp-hdr-title">まいにち脳活 — 総合テスト</span></div>
-    <div class="hdr-right"></div>
+    <!-- ③ 脳を鍛えろ！ -->
+    <button onclick="go('page-tr-select')" style="display:flex;align-items:center;gap:20px;background:#EFF6FF;border:2.5px solid #3B82F6;border-radius:18px;padding:18px 24px;cursor:pointer;box-shadow:0 3px 12px rgba(59,130,246,0.12);transition:transform 0.15s,box-shadow 0.15s;text-align:left;font-family:inherit;width:100%" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(59,130,246,0.2)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 3px 12px rgba(59,130,246,0.12)'">
+      <span style="font-size:44px;line-height:1;flex-shrink:0">🎮</span>
+      <div style="flex:1">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font-size:28px;font-weight:900;color:#1F2937">脳を鍛えろ！</span>
+          <span style="font-size:18px;font-weight:700;color:#4B5563">（トレーニングゲーム）</span>
+        </div>
+        <div style="font-size:15px;color:#6B7280;margin-top:3px">毎日の脳トレで元気な頭に</div>
+      </div>
+      <div style="background:#2563EB;color:#fff;padding:8px 18px;border-radius:10px;font-size:16px;font-weight:900;flex-shrink:0;white-space:nowrap">楽しい</div>
+      <div style="background:#3B82F6;color:#fff;padding:12px 28px;border-radius:12px;font-size:20px;font-weight:900;flex-shrink:0;letter-spacing:0.05em;box-shadow:0 4px 12px rgba(59,130,246,0.4)">選ぶ→</div>
+    </button>
+
+    <!-- ④ その他 -->
+    <button onclick="go('page-coming')" style="display:flex;align-items:center;gap:20px;background:#FAF5FF;border:2.5px solid #A855F7;border-radius:18px;padding:18px 24px;cursor:pointer;box-shadow:0 3px 12px rgba(168,85,247,0.12);transition:transform 0.15s,box-shadow 0.15s;text-align:left;font-family:inherit;width:100%" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(168,85,247,0.2)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 3px 12px rgba(168,85,247,0.12)'">
+      <span style="font-size:44px;line-height:1;flex-shrink:0">✨</span>
+      <div style="flex:1">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font-size:28px;font-weight:900;color:#1F2937">その他</span>
+          <span style="font-size:18px;font-weight:700;color:#4B5563">（その他の機能）</span>
+        </div>
+        <div style="font-size:15px;color:#6B7280;margin-top:3px">そのまま追加される新機能</div>
+      </div>
+      <div style="background:#9333EA;color:#fff;padding:8px 18px;border-radius:10px;font-size:16px;font-weight:900;flex-shrink:0;white-space:nowrap">準備中</div>
+      <div style="background:#A855F7;color:#fff;padding:12px 28px;border-radius:12px;font-size:20px;font-weight:900;flex-shrink:0;letter-spacing:0.05em;box-shadow:0 4px 12px rgba(168,85,247,0.4)">選ぶ→</div>
+    </button>
+
   </div>
-  <div class="body" style="padding:24px 64px;justify-content:center;gap:20px;">
-    <div id="comp-course-info" style="text-align:center;">
-      <div id="comp-course-badge" style="display:inline-block;padding:6px 20px;border-radius:100px;font-size:18px;font-weight:900;margin-bottom:12px;"></div>
-      <div id="comp-course-title" style="font-size:44px;font-weight:900;color:#111;margin-bottom:6px;"></div>
-      <div id="comp-course-desc" style="font-size:22px;color:#6B7280;font-weight:600;"></div>
+  <div style="text-align:center;padding:6px;color:#9CA3AF;font-size:14px;flex-shrink:0">ボタンをタップしてください</div>
+</div>
+<!-- ═══ COMP（総合テスト詳細） ═══ -->
+<div class="page" id="page-comp" style="background:#FFFBF0">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:0 24px;min-height:56px;background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);box-shadow:0 4px 20px rgba(22,163,74,0.3);flex-shrink:0">
+    <button onclick="go('page-menu')" style="display:flex;align-items:center;gap:6px;background:none;border:none;color:#fff;font-size:20px;font-weight:700;cursor:pointer;font-family:inherit">‹ 戻る</button>
+    <div style="display:flex;align-items:center;gap:10px"><span style="font-size:26px">🧠</span><span style="font-size:24px;font-weight:900;color:#fff;letter-spacing:0.06em">まいにち脳活</span></div>
+    <div style="width:90px"></div>
+  </header>
+
+  <div style="flex:1;display:flex;flex-direction:column;padding:14px 24px 10px;gap:12px;overflow:hidden">
+    <p style="text-align:center;color:#374151;font-weight:700;font-size:20px;flex-shrink:0">コースを選んでください</p>
+
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;overflow:hidden">
+
+      <!-- ① 総合テスト１ SPP1 緑 -->
+      <button onclick="openGamePlayer('https://mf-check.bolt.host/','総合テスト１')"
+        style="display:flex;align-items:center;gap:16px;
+               background:linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%);
+               border:2.5px solid #22C55E;border-radius:20px;padding:20px 24px;
+               cursor:pointer;text-align:left;font-family:inherit;
+               box-shadow:0 3px 14px rgba(34,197,94,0.1);transition:transform 0.15s,box-shadow 0.15s"
+        onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 28px rgba(34,197,94,0.2)'"
+        onmouseleave="this.style.transform='';this.style.boxShadow='0 3px 14px rgba(34,197,94,0.1)'">
+        <div style="width:52px;height:52px;background:#22C55E;border-radius:14px;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:24px;font-weight:900;color:#fff;flex-shrink:0;
+                    box-shadow:0 4px 12px rgba(34,197,94,0.4)">①</div>
+        <div style="flex:1">
+          <div style="font-size:24px;font-weight:900;color:#15803D;margin-bottom:3px">総合テスト１</div>
+          <div style="font-size:15px;font-weight:700;color:#16A34A;margin-bottom:3px">SPP1</div>
+          <div style="font-size:13px;color:#6B7280">約10分・4つのチェック</div>
+        </div>
+        <div style="background:#22C55E;color:#fff;padding:12px 22px;border-radius:12px;
+                    font-size:18px;font-weight:900;flex-shrink:0;
+                    box-shadow:0 4px 12px rgba(34,197,94,0.35)">選ぶ→</div>
+      </button>
+
+      <!-- ② 総合テスト２ SPP2 オレンジ -->
+      <button onclick="showCourseDetail('spp2')"
+        style="display:flex;align-items:center;gap:16px;
+               background:linear-gradient(135deg,#FFF7ED 0%,#FED7AA 100%);
+               border:2.5px solid #F97316;border-radius:20px;padding:20px 24px;
+               cursor:pointer;text-align:left;font-family:inherit;
+               box-shadow:0 3px 14px rgba(249,115,22,0.1);transition:transform 0.15s,box-shadow 0.15s"
+        onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 28px rgba(249,115,22,0.2)'"
+        onmouseleave="this.style.transform='';this.style.boxShadow='0 3px 14px rgba(249,115,22,0.1)'">
+        <div style="width:52px;height:52px;background:#F97316;border-radius:14px;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:24px;font-weight:900;color:#fff;flex-shrink:0;
+                    box-shadow:0 4px 12px rgba(249,115,22,0.4)">②</div>
+        <div style="flex:1">
+          <div style="font-size:24px;font-weight:900;color:#C2410C;margin-bottom:3px">総合テスト２</div>
+          <div style="font-size:15px;font-weight:700;color:#EA580C;margin-bottom:3px">SPP2</div>
+          <div style="font-size:13px;color:#6B7280">約15分・4つのチェック</div>
+        </div>
+        <div style="background:#F97316;color:#fff;padding:12px 22px;border-radius:12px;
+                    font-size:18px;font-weight:900;flex-shrink:0;
+                    box-shadow:0 4px 12px rgba(249,115,22,0.35)">選ぶ→</div>
+      </button>
+
+      <!-- ③ 総合テスト３-１ SPP3 紫 -->
+      <button onclick="showCourseDetail('spp3a')"
+        style="display:flex;align-items:center;gap:16px;
+               background:linear-gradient(135deg,#F5F3FF 0%,#DDD6FE 100%);
+               border:2.5px solid #8B5CF6;border-radius:20px;padding:20px 24px;
+               cursor:pointer;text-align:left;font-family:inherit;
+               box-shadow:0 3px 14px rgba(139,92,246,0.1);transition:transform 0.15s,box-shadow 0.15s"
+        onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 28px rgba(139,92,246,0.2)'"
+        onmouseleave="this.style.transform='';this.style.boxShadow='0 3px 14px rgba(139,92,246,0.1)'">
+        <div style="width:52px;height:52px;background:#8B5CF6;border-radius:14px;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:24px;font-weight:900;color:#fff;flex-shrink:0;
+                    box-shadow:0 4px 12px rgba(139,92,246,0.4)">③</div>
+        <div style="flex:1">
+          <div style="font-size:24px;font-weight:900;color:#6D28D9;margin-bottom:3px">総合テスト３-１</div>
+          <div style="font-size:15px;font-weight:700;color:#7C3AED;margin-bottom:3px">SPP3</div>
+          <div style="font-size:13px;color:#6B7280">約15分・4つのチェック</div>
+        </div>
+        <div style="background:#8B5CF6;color:#fff;padding:12px 22px;border-radius:12px;
+                    font-size:18px;font-weight:900;flex-shrink:0;
+                    box-shadow:0 4px 12px rgba(139,92,246,0.35)">選ぶ→</div>
+      </button>
+
+      <!-- ④ 総合テスト３-２ SPP3 青 -->
+      <button onclick="showCourseDetail('spp3b')"
+        style="display:flex;align-items:center;gap:16px;
+               background:linear-gradient(135deg,#EFF6FF 0%,#BFDBFE 100%);
+               border:2.5px solid #3B82F6;border-radius:20px;padding:20px 24px;
+               cursor:pointer;text-align:left;font-family:inherit;
+               box-shadow:0 3px 14px rgba(59,130,246,0.1);transition:transform 0.15s,box-shadow 0.15s"
+        onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 28px rgba(59,130,246,0.2)'"
+        onmouseleave="this.style.transform='';this.style.boxShadow='0 3px 14px rgba(59,130,246,0.1)'">
+        <div style="width:52px;height:52px;background:#3B82F6;border-radius:14px;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:24px;font-weight:900;color:#fff;flex-shrink:0;
+                    box-shadow:0 4px 12px rgba(59,130,246,0.4)">④</div>
+        <div style="flex:1">
+          <div style="font-size:24px;font-weight:900;color:#1D4ED8;margin-bottom:3px">総合テスト３-２</div>
+          <div style="font-size:15px;font-weight:700;color:#2563EB;margin-bottom:3px">SPP3</div>
+          <div style="font-size:13px;color:#6B7280">約15分・4つのチェック</div>
+        </div>
+        <div style="background:#3B82F6;color:#fff;padding:12px 22px;border-radius:12px;
+                    font-size:18px;font-weight:900;flex-shrink:0;
+                    box-shadow:0 4px 12px rgba(59,130,246,0.35)">選ぶ→</div>
+      </button>
+
     </div>
-    <div id="comp-games-list" style="display:flex;flex-direction:column;gap:12px;max-width:800px;width:100%;margin:0 auto;"></div>
-    <div style="display:flex;justify-content:center;margin-top:8px;">
-      <button onclick="launchCourse()" style="background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);color:#fff;border:none;border-radius:20px;padding:20px 80px;font-size:30px;font-weight:900;letter-spacing:0.12em;cursor:pointer;box-shadow:0 6px 24px rgba(34,197,94,0.4);">スタート →</button>
+  </div>
+  <div style="text-align:center;padding:6px;color:#9CA3AF;font-size:14px;flex-shrink:0">コースをタップしてください</div>
+</div>
+<!-- ═══ COMP DETAIL（コース内容確認） ═══ -->
+<div class="page" id="page-comp-detail" style="background:#FFFBF0">
+  <header id="comp-detail-header" style="display:flex;align-items:center;justify-content:space-between;padding:0 24px;min-height:56px;background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);box-shadow:0 4px 20px rgba(22,163,74,0.3);flex-shrink:0">
+    <button onclick="go('page-comp')" style="display:flex;align-items:center;gap:6px;background:none;border:none;color:#fff;font-size:20px;font-weight:700;cursor:pointer;font-family:inherit">‹ 戻る</button>
+    <div id="comp-detail-header-title" style="font-size:22px;font-weight:900;color:#fff;letter-spacing:0.05em"></div>
+    <div style="width:90px"></div>
+  </header>
+  <div style="flex:1;display:flex;flex-direction:column;padding:12px 24px;gap:10px;overflow:hidden">
+    <!-- タイトルバー -->
+    <div id="comp-detail-titlebar" style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-radius:16px;border:2px solid #FBBF24;background:linear-gradient(135deg,#FEF9C3 0%,#FEF08A 60%,#FDE68A 100%);box-shadow:0 4px 16px rgba(251,191,36,0.2);flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="font-size:32px">⭐</span>
+        <div>
+          <div id="comp-detail-title" style="font-size:22px;font-weight:900;color:#92400E"></div>
+          <div id="comp-detail-sub" style="font-size:14px;color:#B45309;font-weight:600;margin-top:2px"></div>
+        </div>
+      </div>
+      <button onclick="launchCourse()" style="background:linear-gradient(135deg,#F97316 0%,#EA580C 100%);color:#fff;border:none;border-radius:12px;padding:10px 28px;font-size:20px;font-weight:900;cursor:pointer;letter-spacing:0.1em;box-shadow:0 4px 14px rgba(234,88,12,0.4);font-family:inherit">開始</button>
     </div>
+    <!-- ゲーム一覧 -->
+    <div id="comp-detail-games" style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:10px;overflow:hidden"></div>
   </div>
-  <div class="ftr">ゲームを確認してスタートを押してください</div>
 </div>
+<!-- ═══ TR SELECT ═══ -->
+<div class="page" id="page-tr-select" style="background:#FFFBF0">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:0 24px;min-height:56px;background:linear-gradient(135deg,#3B82F6 0%,#1E40AF 100%);box-shadow:0 4px 20px rgba(59,130,246,0.3);flex-shrink:0">
+    <button onclick="go('page-menu')" style="display:flex;align-items:center;gap:6px;background:none;border:none;color:#fff;font-size:20px;font-weight:700;cursor:pointer;font-family:inherit">‹ 戻る</button>
+    <div style="display:flex;align-items:center;gap:10px"><span style="font-size:26px">🧠</span><span style="font-size:26px;font-weight:900;color:#fff;letter-spacing:0.08em">まいにち脳活</span></div>
+    <div style="width:90px"></div>
+  </header>
+  <div style="flex:1;display:flex;flex-direction:column;padding:12px 32px 8px;gap:8px;overflow:hidden">
+    <p style="text-align:center;color:#374151;font-weight:700;font-size:20px;flex-shrink:0">鍛えたい能力を選んでください</p>
+    <!-- 上3行：2列 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;overflow:hidden">
 
-<div class="page" id="page-tr-select">
-  <div class="hdr"><button class="hdr-back" onclick="go('page-menu')">‹ もどる</button><div class="hdr-logo"><span class="hdr-logo-icon">🧠</span><span class="hdr-logo-text">まいにち脳活 — トレーニング</span></div><div class="hdr-right"></div></div>
-  <div class="body">
-    <button class="tr-card" style="border-color:#93C5FD;" onclick="go('page-tr-obs')"><div class="tr-card-icon" style="background:#DBEAFE;">👀</div><span class="tr-card-label" style="color:#1D4ED8;">観察力</span><span class="tr-card-sub">目で探す・気づく力</span></button>
-    <button class="tr-card" style="border-color:#C4B5FD;" onclick="go('page-tr-jud')"><div class="tr-card-icon" style="background:#EDE9FE;">⚖️</div><span class="tr-card-label" style="color:#5B21B6;">判断力</span><span class="tr-card-sub">考えて素早く決める</span></button>
-    <button class="tr-card" style="border-color:#86EFAC;" onclick="go('page-tr-calc')"><div class="tr-card-icon" style="background:#D1FAE5;">🔢</div><span class="tr-card-label" style="color:#166534;">計算力</span><span class="tr-card-sub">数字で頭を動かす</span></button>
-    <button class="tr-card" style="border-color:#FDE68A;" onclick="go('page-tr-mem')"><div class="tr-card-icon" style="background:#FEF3C7;">🧠</div><span class="tr-card-label" style="color:#92400E;">記憶力</span><span class="tr-card-sub">覚えて思い出す</span></button>
-    <button class="tr-card" style="border-color:#F9A8D4;" onclick="go('page-tr-int')"><div class="tr-card-icon" style="background:#FCE7F3;">✨</div><span class="tr-card-label" style="color:#9D174D;">直感力</span><span class="tr-card-sub">瞬時に感じとる力</span></button>
-    <button class="tr-card" style="border-color:#FCA5A5;" onclick="go('page-tr-react')"><div class="tr-card-icon" style="background:#FEE2E2;">⚡</div><span class="tr-card-label" style="color:#991B1B;">反応力</span><span class="tr-card-sub">すばやく反応する</span></button>
-    <button class="tr-card" style="border-color:#A5B4FC;" onclick="go('page-tr-know')"><div class="tr-card-icon" style="background:#E0E7FF;">📚</div><span class="tr-card-label" style="color:#3730A3;">知力</span><span class="tr-card-sub">知識・語彙を磨く</span></button>
-    <div style="background:#f9fafb;border-radius:20px;border:3px dashed #ccc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;"><span style="font-size:28px;">＋</span><span style="font-size:16px;font-weight:700;color:#bbb;">準備中</span></div>
+      <!-- 観察力 -->
+      <button onclick="go('page-tr-obs')" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);border:2.5px solid #60A5FA;border-radius:16px;padding:14px 20px;cursor:pointer;transition:transform 0.15s;font-family:inherit" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+        <span style="font-size:38px;line-height:1;flex-shrink:0">👀</span>
+        <div style="flex:1;text-align:left">
+          <div style="font-size:26px;font-weight:900;color:#1D4ED8">観察力</div>
+          <div style="font-size:14px;color:#6B7280;font-weight:500">脳トレーニング</div>
+        </div>
+        <div style="background:#3B82F6;color:#fff;padding:10px 20px;border-radius:10px;font-size:18px;font-weight:900;flex-shrink:0;letter-spacing:0.05em">選ぶ→</div>
+      </button>
+
+      <!-- 判断力 -->
+      <button onclick="go('page-tr-jud')" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);border:2.5px solid #A78BFA;border-radius:16px;padding:14px 20px;cursor:pointer;transition:transform 0.15s;font-family:inherit" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+        <span style="font-size:38px;line-height:1;flex-shrink:0">⚖️</span>
+        <div style="flex:1;text-align:left">
+          <div style="font-size:26px;font-weight:900;color:#7C3AED">判断力</div>
+          <div style="font-size:14px;color:#6B7280;font-weight:500">脳トレーニング</div>
+        </div>
+        <div style="background:#8B5CF6;color:#fff;padding:10px 20px;border-radius:10px;font-size:18px;font-weight:900;flex-shrink:0;letter-spacing:0.05em">選ぶ→</div>
+      </button>
+
+      <!-- 計算力 -->
+      <button onclick="go('page-tr-calc')" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%);border:2.5px solid #34D399;border-radius:16px;padding:14px 20px;cursor:pointer;transition:transform 0.15s;font-family:inherit" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+        <span style="font-size:38px;line-height:1;flex-shrink:0">🔢</span>
+        <div style="flex:1;text-align:left">
+          <div style="font-size:26px;font-weight:900;color:#059669">計算力</div>
+          <div style="font-size:14px;color:#6B7280;font-weight:500">脳トレーニング</div>
+        </div>
+        <div style="background:#10B981;color:#fff;padding:10px 20px;border-radius:10px;font-size:18px;font-weight:900;flex-shrink:0;letter-spacing:0.05em">選ぶ→</div>
+      </button>
+
+      <!-- 記憶力 -->
+      <button onclick="go('page-tr-mem')" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FFFBEB 0%,#FEF3C7 100%);border:2.5px solid #FCD34D;border-radius:16px;padding:14px 20px;cursor:pointer;transition:transform 0.15s;font-family:inherit" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+        <span style="font-size:38px;line-height:1;flex-shrink:0">🧠</span>
+        <div style="flex:1;text-align:left">
+          <div style="font-size:26px;font-weight:900;color:#D97706">記憶力</div>
+          <div style="font-size:14px;color:#6B7280;font-weight:500">脳トレーニング</div>
+        </div>
+        <div style="background:#F59E0B;color:#fff;padding:10px 20px;border-radius:10px;font-size:18px;font-weight:900;flex-shrink:0;letter-spacing:0.05em">選ぶ→</div>
+      </button>
+
+      <!-- 直感力 -->
+      <button onclick="go('page-tr-int')" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FDF2F8 0%,#FCE7F3 100%);border:2.5px solid #F472B6;border-radius:16px;padding:14px 20px;cursor:pointer;transition:transform 0.15s;font-family:inherit" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+        <span style="font-size:38px;line-height:1;flex-shrink:0">✨</span>
+        <div style="flex:1;text-align:left">
+          <div style="font-size:26px;font-weight:900;color:#DB2777">直感力</div>
+          <div style="font-size:14px;color:#6B7280;font-weight:500">脳トレーニング</div>
+        </div>
+        <div style="background:#EC4899;color:#fff;padding:10px 20px;border-radius:10px;font-size:18px;font-weight:900;flex-shrink:0;letter-spacing:0.05em">選ぶ→</div>
+      </button>
+
+      <!-- 反応力 -->
+      <button onclick="go('page-tr-react')" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%);border:2.5px solid #F87171;border-radius:16px;padding:14px 20px;cursor:pointer;transition:transform 0.15s;font-family:inherit" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+        <span style="font-size:38px;line-height:1;flex-shrink:0">⚡</span>
+        <div style="flex:1;text-align:left">
+          <div style="font-size:26px;font-weight:900;color:#DC2626">反応力</div>
+          <div style="font-size:14px;color:#6B7280;font-weight:500">脳トレーニング</div>
+        </div>
+        <div style="background:#EF4444;color:#fff;padding:10px 20px;border-radius:10px;font-size:18px;font-weight:900;flex-shrink:0;letter-spacing:0.05em">選ぶ→</div>
+      </button>
+
+    </div>
+    <!-- 知力：下段単独 -->
+    <button onclick="go('page-tr-know')" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#EEF2FF 0%,#E0E7FF 100%);border:2.5px solid #818CF8;border-radius:16px;padding:14px 20px;cursor:pointer;transition:transform 0.15s;font-family:inherit;flex-shrink:0" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+      <span style="font-size:38px;line-height:1;flex-shrink:0">📚</span>
+      <div style="flex:1;text-align:left">
+        <div style="font-size:26px;font-weight:900;color:#4338CA">知力</div>
+        <div style="font-size:14px;color:#6B7280;font-weight:500">脳トレーニング</div>
+      </div>
+      <div style="background:#6366F1;color:#fff;padding:10px 20px;border-radius:10px;font-size:18px;font-weight:900;flex-shrink:0;letter-spacing:0.05em">選ぶ→</div>
+    </button>
   </div>
-  <div class="ftr"><span>鍛えたい能力をタップしてください</span></div>
+  <div style="text-align:center;padding:6px;color:#9CA3AF;font-size:14px;flex-shrink:0">ボタンをタップしてください</div>
 </div>
-
+<!-- ═══ TR DETAIL（JS生成） ═══ -->
 <div class="page" id="page-tr-calc"></div>
 <div class="page" id="page-tr-obs"></div>
 <div class="page" id="page-tr-mem"></div>
@@ -390,227 +371,195 @@
 <div class="page" id="page-tr-react"></div>
 <div class="page" id="page-tr-know"></div>
 
-<div class="page" id="page-progress">
-  <div class="hdr"><button class="hdr-back" onclick="exitProgress()">‹ もどる</button><div class="hdr-logo"><span class="hdr-logo-icon">🧠</span><span class="hdr-logo-text">まいにち脳活 — ゲーム進行</span></div><div class="hdr-right"></div></div>
-  <div class="body">
-    <div class="prog-summary"><div><div class="prog-summary-label">完了</div><div class="prog-summary-num"><span id="prog-done">0</span><span style="font-size:20px;color:#888;font-weight:700;"> / <span id="prog-total">0</span></span></div></div><div class="prog-bar-wrap"><div class="prog-bar-bg"><div class="prog-bar-fill" id="prog-bar" style="width:0%;"></div></div><div class="prog-bar-pct" id="prog-pct">0%</div></div></div>
-    <div class="prog-list" id="prog-list"></div>
-    <div class="prog-complete" id="prog-complete"><div style="font-size:48px;">🎉</div><div style="font-size:26px;font-weight:900;color:#166534;">全て完了しました！</div><div style="font-size:18px;color:#4B5563;">お疲れさまでした。今日も脳を動かしました！</div><button class="btn btn-green" style="font-size:22px;padding:16px 52px;" onclick="go('page-menu')">メニューにもどる</button></div>
+<!-- ═══ PROGRESS ═══ -->
+<div class="page" id="page-progress" style="background:#FFFBF0">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:0 24px;min-height:60px;background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);box-shadow:0 4px 20px rgba(22,163,74,0.3);flex-shrink:0">
+    <button onclick="exitProgress()" style="display:flex;align-items:center;gap:8px;background:none;border:none;color:#fff;font-size:18px;font-weight:700;cursor:pointer">‹ もどる</button>
+    <div style="display:flex;align-items:center;gap:8px"><span style="font-size:28px">🧠</span><span style="font-size:26px;font-weight:900;color:#fff;letter-spacing:0.08em">まいにち脳活</span></div>
+    <div style="width:100px"></div>
+  </header>
+  <div style="flex:1;display:flex;flex-direction:column;padding:12px 24px;gap:10px;overflow:hidden">
+    <div style="text-align:center"><p style="color:#374151;font-weight:700;font-size:20px">ゲーム進行状況</p><p id="prog-count" style="color:#6B7280;font-size:16px;margin-top:4px"></p></div>
+    <div id="prog-list" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px"></div>
+    <div id="prog-complete" style="display:none;background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border:3px solid #22C55E;border-radius:16px;padding:16px;text-align:center;flex-direction:column;gap:12px;align-items:center">
+      <div style="font-size:36px">🎉</div>
+      <div style="font-size:20px;font-weight:900;color:#15803D">全て完了しました！</div>
+      <div style="font-size:15px;color:#4B5563">お疲れさまでした。今日も脳を動かしました！</div>
+      <button onclick="go('page-menu')" style="background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);color:#fff;border:none;border-radius:16px;padding:16px 52px;font-size:22px;font-weight:900;cursor:pointer;letter-spacing:0.08em">メニューにもどる</button>
+    </div>
   </div>
-  <div class="ftr"><span>順番にゲームを進めてください</span></div>
+  <div style="text-align:center;padding:12px;color:#9CA3AF;font-size:15px;flex-shrink:0">各ゲームを順番に進めてください</div>
 </div>
 
-<div class="page" id="page-coming">
-  <div class="hdr"><button class="hdr-back" onclick="go('page-menu')">‹ もどる</button><div class="hdr-logo"><span class="hdr-logo-icon">🧠</span><span class="hdr-logo-text">まいにち脳活</span></div><div class="hdr-right"></div></div>
-  <div class="body"><div style="font-size:80px;">🎮</div><div style="text-align:center;"><div style="font-size:52px;font-weight:900;color:#1E3A8A;letter-spacing:0.1em;">Coming Soon</div><div style="font-size:24px;font-weight:700;color:#2563EB;margin-top:8px;">ただいま準備中です</div><div style="font-size:18px;color:#555;margin-top:8px;line-height:1.8;">まもなく登場します。お楽しみに！</div></div><button class="btn btn-green" style="font-size:22px;padding:16px 52px;margin-top:8px;" onclick="go('page-menu')">メニューにもどる</button></div>
-  <div class="ftr"><span>まいにち脳活 — D&amp;P Media</span></div>
+<!-- ═══ GAME PLAYER ═══ -->
+<div class="page" id="page-game-player" style="background:#000;position:relative">
+  <div id="game-player-bar" style="position:absolute;top:0;left:0;right:0;height:52px;z-index:100;background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);display:flex;align-items:center;justify-content:space-between;padding:0 20px;box-shadow:0 2px 12px rgba(0,0,0,0.3);transition:opacity 0.3s,transform 0.3s">
+    <button onclick="closeGamePlayer()" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.5);border-radius:12px;padding:8px 18px;color:#fff;font-size:18px;font-weight:900;cursor:pointer">‹ もどる</button>
+    <span id="game-player-title" style="color:#fff;font-size:18px;font-weight:700;letter-spacing:0.05em"></span>
+    <button onclick="togglePlayerBar()" style="background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);border-radius:10px;padding:6px 14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer">全画面</button>
+  </div>
+  <iframe id="game-iframe" style="position:absolute;top:52px;left:0;right:0;bottom:0;width:100%;height:calc(100% - 52px);border:none" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"></iframe>
+</div>
+
+<!-- ═══ COMING SOON ═══ -->
+<div class="page" id="page-coming" style="background:linear-gradient(160deg,#EFF6FF 0%,#DBEAFE 50%,#EFF6FF 100%)">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:0 24px;min-height:60px;background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);box-shadow:0 4px 20px rgba(22,163,74,0.3);flex-shrink:0">
+    <button onclick="go('page-menu')" style="display:flex;align-items:center;gap:8px;background:none;border:none;color:#fff;font-size:22px;font-weight:700;cursor:pointer">‹ もどる</button>
+    <div style="display:flex;align-items:center;gap:12px"><span style="font-size:28px">🧠</span><span style="font-size:28px;font-weight:900;color:#fff;letter-spacing:0.08em">まいにち脳活</span></div>
+    <div style="width:120px"></div>
+  </header>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px">
+    <span style="font-size:80px;line-height:1">🎮</span>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+      <h1 style="font-size:56px;font-weight:900;color:#1E3A8A;letter-spacing:0.1em">Coming Soon</h1>
+      <p style="font-size:26px;font-weight:700;color:#2563EB">ただいま準備中です</p>
+      <p style="color:#6B7280;font-size:20px;text-align:center;line-height:1.8">新機能はまもなく登場します。お楽しみに！</p>
+    </div>
+    <button onclick="go('page-menu')" style="background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);color:#fff;border:none;border-radius:16px;padding:16px 56px;font-size:26px;font-weight:900;cursor:pointer;letter-spacing:0.1em;box-shadow:0 6px 24px rgba(34,197,94,0.4);font-family:inherit">メニューにもどる</button>
+  </div>
 </div>
 
 
-
-
-<!-- ═══ 設定ページ ═══ -->
-
-<!-- ═══ ゲームプレイヤー ═══ -->
-<div class="page" id="page-game-player" style="background:#000;position:relative;">
-  <div id="game-player-bar" style="position:absolute;top:0;left:0;right:0;height:52px;z-index:100;background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);display:flex;align-items:center;justify-content:space-between;padding:0 20px;box-shadow:0 2px 12px rgba(0,0,0,0.3);transition:opacity 0.3s,transform 0.3s;">
-    <button onclick="closeGamePlayer()" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.5);border-radius:12px;padding:8px 18px;color:#fff;font-size:18px;font-weight:900;cursor:pointer;">‹ もどる</button>
-    <span id="game-player-title" style="color:#fff;font-size:18px;font-weight:700;letter-spacing:0.05em;"></span>
-    <button onclick="togglePlayerBar()" style="background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);border-radius:10px;padding:6px 14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">全画面</button>
-  </div>
-  <iframe id="game-iframe" style="position:absolute;top:52px;left:0;right:0;bottom:0;width:100%;height:calc(100% - 52px);border:none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"></iframe>
-</div>
-
-<div class="page" id="page-settings">
-  <div class="hdr" style="background:linear-gradient(135deg,#475569 0%,#1E293B 100%);box-shadow:0 4px 20px rgba(0,0,0,0.3);">
-    <button class="hdr-back" onclick="go('page-menu')">&#8249; もどる</button>
-    <div class="hdr-logo"><span class="hdr-logo-icon">&#9881;&#65039;</span><span class="hdr-logo-text">設定</span></div>
-    <div class="hdr-right"></div>
-  </div>
-  <div class="body" style="overflow-y:auto;padding:20px 48px;gap:16px;display:flex;flex-direction:column;">
-
+<!-- ═══ SETTINGS ═══ -->
+<div class="page" id="page-settings" style="background:#FFFBF0">
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:0 32px;min-height:64px;background:linear-gradient(135deg,#475569 0%,#1E293B 100%);box-shadow:0 4px 20px rgba(0,0,0,0.3);flex-shrink:0">
+    <button onclick="go('page-menu')" style="display:flex;align-items:center;gap:8px;background:none;border:none;color:#fff;font-size:22px;font-weight:700;cursor:pointer">‹ もどる</button>
+    <div style="display:flex;align-items:center;gap:12px"><span style="font-size:28px">⚙️</span><span style="font-size:28px;font-weight:900;color:#fff">設定</span></div>
+    <div style="width:120px"></div>
+  </header>
+  <div style="flex:1;overflow-y:auto;padding:12px 32px;display:flex;flex-direction:column;gap:10px">
     <div class="ud-sec">
-      <div class="ud-sec-title">文字の大きさ</div>
+      <div class="ud-sec-title">🔤 文字の大きさ</div>
       <div class="ud-btn-row">
-        <button class="ud-cbtn active" id="fs-normal" onclick="setFontSize('normal')"><span style="font-size:18px;">あ</span><span>標準</span></button>
-        <button class="ud-cbtn" id="fs-large" onclick="setFontSize('large')"><span style="font-size:24px;">あ</span><span>大きい</span></button>
-        <button class="ud-cbtn" id="fs-xlarge" onclick="setFontSize('xlarge')"><span style="font-size:30px;">あ</span><span>とても大きい</span></button>
+        <button class="ud-cbtn active" id="fs-normal" onclick="setFontSize('normal')"><span style="font-size:18px">あ</span><span>標準</span></button>
+        <button class="ud-cbtn" id="fs-large" onclick="setFontSize('large')"><span style="font-size:24px">あ</span><span>大きい</span></button>
+        <button class="ud-cbtn" id="fs-xlarge" onclick="setFontSize('xlarge')"><span style="font-size:30px">あ</span><span>とても大きい</span></button>
       </div>
     </div>
-
     <div class="ud-sec">
-      <div class="ud-sec-title">画面の色・見た目</div>
+      <div class="ud-sec-title">🎨 画面の色・見た目</div>
       <div class="ud-btn-row">
-        <button class="ud-cbtn active" id="theme-normal" onclick="setTheme('normal')"><span style="font-size:24px;">&#9728;&#65039;</span><span>通常</span></button>
-        <button class="ud-cbtn" id="theme-dark" onclick="setTheme('dark')"><span style="font-size:24px;">&#127769;</span><span>ダーク</span></button>
-        <button class="ud-cbtn" id="theme-invert" onclick="setTheme('invert')"><span style="font-size:24px;">&#9681;</span><span>白黒反転</span></button>
-        <button class="ud-cbtn" id="theme-grayscale" onclick="setTheme('grayscale')"><span style="font-size:24px;">&#9634;</span><span>グレースケール</span></button>
+        <button class="ud-cbtn active" id="theme-normal" onclick="setTheme('normal')"><span style="font-size:24px">☀️</span><span>通常</span></button>
+        <button class="ud-cbtn" id="theme-dark" onclick="setTheme('dark')"><span style="font-size:24px">🌙</span><span>ダーク</span></button>
+        <button class="ud-cbtn" id="theme-invert" onclick="setTheme('invert')"><span style="font-size:24px">◑</span><span>白黒反転</span></button>
+        <button class="ud-cbtn" id="theme-grayscale" onclick="setTheme('grayscale')"><span style="font-size:24px">⬜</span><span>グレースケール</span></button>
       </div>
     </div>
-
     <div class="ud-sec">
-      <div class="ud-sec-title">その他の表示設定</div>
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div class="ud-trow">
-          <div class="ud-tinfo"><div class="ud-tlabel">ボタンの枠線を強調する</div><div class="ud-tdesc">ボタンや選択肢の境界をより太く・はっきり表示します</div></div>
-          <button class="ud-tog" id="tog-border" onclick="toggleUD('border',this)"><span class="ud-knob"></span></button>
-        </div>
-        <div class="ud-trow">
-          <div class="ud-tinfo"><div class="ud-tlabel">行間・文字間を広げる</div><div class="ud-tdesc">テキストを読みやすいよう行間と文字間隔を広げます</div></div>
-          <button class="ud-tog" id="tog-linespace" onclick="toggleUD('linespace',this)"><span class="ud-knob"></span></button>
-        </div>
-        <div class="ud-trow">
-          <div class="ud-tinfo"><div class="ud-tlabel">アニメーションを止める</div><div class="ud-tdesc">画面の切り替え動作をすべて瞬時に行います</div></div>
-          <button class="ud-tog" id="tog-noanim" onclick="toggleUD('no-anim',this)"><span class="ud-knob"></span></button>
-        </div>
+      <div class="ud-sec-title">🛠️ その他の表示設定</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="ud-trow"><div class="ud-tinfo"><div class="ud-tlabel">ボタンの枠線を強調する</div><div class="ud-tdesc">ボタンや選択肢の境界をより太く表示します</div></div><button class="ud-tog" id="tog-border" onclick="toggleUD('border',this)" aria-checked="false"><span class="ud-knob"></span></button></div>
+        <div class="ud-trow"><div class="ud-tinfo"><div class="ud-tlabel">行間・文字間を広げる</div><div class="ud-tdesc">テキストを読みやすいよう行間と文字間隔を広げます</div></div><button class="ud-tog" id="tog-linespace" onclick="toggleUD('linespace',this)" aria-checked="false"><span class="ud-knob"></span></button></div>
+        <div class="ud-trow"><div class="ud-tinfo"><div class="ud-tlabel">アニメーションを止める</div><div class="ud-tdesc">画面の切り替え動作をすべて瞬時に行います</div></div><button class="ud-tog" id="tog-noanim" onclick="toggleUD('no-anim',this)" aria-checked="false"><span class="ud-knob"></span></button></div>
       </div>
     </div>
-
     <div class="ud-sec">
-      <div class="ud-sec-title">音声読み上げ（テキスト読み上げ）</div>
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div class="ud-trow">
-          <div class="ud-tinfo"><div class="ud-tlabel">ボタンタップ時に読み上げる</div><div class="ud-tdesc">ボタンや項目をタップすると、その内容を音声で読み上げます</div></div>
-          <button class="ud-tog" id="tog-tts" onclick="toggleTTS(this)"><span class="ud-knob"></span></button>
-        </div>
-        <div id="tts-opts" style="display:none;flex-direction:column;gap:10px;padding:16px;background:#F8FAFC;border-radius:14px;border:2px solid #E2E8F0;">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <span style="font-size:18px;font-weight:700;color:#374151;">読み上げ速度</span>
-            <span id="tts-rate-lbl" style="font-size:18px;font-weight:900;color:#16A34A;">普通</span>
+      <div class="ud-sec-title">🔊 音声読み上げ</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="ud-trow"><div class="ud-tinfo"><div class="ud-tlabel">ボタンタップ時に読み上げる</div><div class="ud-tdesc">ボタンや項目をタップすると、その内容を音声で読み上げます</div></div><button class="ud-tog" id="tog-tts" onclick="toggleTTS(this)" aria-checked="false"><span class="ud-knob"></span></button></div>
+        <div id="tts-opts" style="display:none;flex-direction:column;gap:10px;padding:16px;background:#F8FAFC;border-radius:14px;border:2px solid #E2E8F0">
+          <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:18px;font-weight:700;color:#374151">読み上げ速度</span><span id="tts-rate-lbl" style="font-size:18px;font-weight:900;color:#16A34A">普通</span></div>
+          <div style="display:flex;gap:10px">
+            <button class="ud-cbtn ud-sm" id="rate-slow" onclick="setTTSRate(0.7,'ゆっくり',this)"><span>🐢</span><span>ゆっくり</span></button>
+            <button class="ud-cbtn ud-sm active" id="rate-normal" onclick="setTTSRate(1.0,'普通',this)"><span>🚶</span><span>普通</span></button>
+            <button class="ud-cbtn ud-sm" id="rate-fast" onclick="setTTSRate(1.4,'はやい',this)"><span>🏃</span><span>はやい</span></button>
           </div>
-          <div style="display:flex;gap:10px;">
-            <button class="ud-cbtn ud-sm" id="rate-slow" onclick="setTTSRate(0.7,'ゆっくり',this)"><span>&#x1F422;</span><span>ゆっくり</span></button>
-            <button class="ud-cbtn ud-sm active" id="rate-normal" onclick="setTTSRate(1.0,'普通',this)"><span>&#x1F6B6;</span><span>普通</span></button>
-            <button class="ud-cbtn ud-sm" id="rate-fast" onclick="setTTSRate(1.4,'はやい',this)"><span>&#x1F3C3;</span><span>はやい</span></button>
-          </div>
-          <button onclick="testTTS()" style="background:#16A34A;color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:18px;font-weight:700;cursor:pointer;">&#9654; テスト読み上げ</button>
+          <button onclick="testTTS()" style="background:#16A34A;color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit">▶ テスト読み上げ</button>
         </div>
       </div>
     </div>
-
-    <div class="ud-sec" style="border-color:#FECACA;background:#FFF5F5;">
-      <div class="ud-sec-title" style="color:#DC2626;">設定をリセット</div>
-      <button onclick="resetUDSettings()" style="background:#EF4444;color:#fff;border:none;border-radius:14px;padding:14px 40px;font-size:20px;font-weight:900;cursor:pointer;">全ての設定を初期値に戻す</button>
+    <div class="ud-sec" style="border-color:#FECACA;background:#FFF5F5">
+      <div class="ud-sec-title" style="color:#DC2626">↺ 設定をリセット</div>
+      <button onclick="resetUDSettings()" style="background:#EF4444;color:#fff;border:none;border-radius:14px;padding:14px 40px;font-size:20px;font-weight:900;cursor:pointer;font-family:inherit">全ての設定を初期値に戻す</button>
     </div>
-
   </div>
-  <div class="ftr">設定はすぐに反映・自動保存されます</div>
+  <div style="text-align:center;padding:12px;color:#9CA3AF;font-size:14px;flex-shrink:0">設定はすぐに反映・自動保存されます</div>
 </div>
 
+<style>
+.skill-pill{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;cursor:pointer;transition:opacity 0.15s;font-family:inherit}
+.skill-pill:hover{opacity:0.8}
+.menu-card{display:flex;align-items:center;gap:20px;text-align:left;border-radius:16px;padding:14px 24px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:transform 0.15s,box-shadow 0.15s;font-family:inherit}
+.menu-card:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,0.1)}
+.tr-sel-btn{display:flex;align-items:center;gap:14px;text-align:left;background:#fff;border-radius:14px;border:3px solid #E5E7EB;padding:10px 16px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:transform 0.15s,box-shadow 0.15s;font-family:inherit}
+.tr-sel-btn:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,0.1)}
+</style>
 
-<!-- アカウントメニュー -->
-<div id="account-popup" style="display:none;position:fixed;top:80px;right:24px;background:#fff;border-radius:18px;border:2px solid #E5E7EB;box-shadow:0 12px 40px rgba(0,0,0,0.15);z-index:200;min-width:240px;overflow:hidden;">
-  <div id="account-popup-header" style="background:linear-gradient(135deg,#22C55E,#15803D);padding:16px 20px;">
-    <div id="popup-username" style="font-size:20px;font-weight:900;color:#fff;"></div>
-    <div id="popup-email" style="font-size:13px;color:rgba(255,255,255,0.8);margin-top:3px;"></div>
-    <div id="popup-type" style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px;"></div>
-  </div>
-  <div style="padding:8px;">
-    <button onclick="closeAccountPopup();go('page-settings')" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;border:none;background:none;border-radius:12px;font-size:16px;font-weight:700;color:#374151;cursor:pointer;text-align:left;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='none'">
-      <span style="font-size:20px;">⚙️</span> 設定
-    </button>
-    <button onclick="doSignOut()" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;border:none;background:none;border-radius:12px;font-size:16px;font-weight:700;color:#EF4444;cursor:pointer;text-align:left;" onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background='none'">
-      <span style="font-size:20px;">🚪</span> ログアウト
-    </button>
-  </div>
-</div>
-<div id="account-overlay" onclick="closeAccountPopup()" style="display:none;position:fixed;inset:0;z-index:199;"></div>
-
-<div id="install-banner" style="display:none;position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#fff;border:3px solid #22C55E;border-radius:18px;padding:16px 28px;box-shadow:0 8px 28px rgba(0,0,0,0.15);align-items:center;gap:16px;z-index:1000;white-space:nowrap;">
-  <p style="font-size:18px;font-weight:700;color:#111;">🏠 ホーム画面に追加できます</p>
-  <button onclick="installPWA()" style="background:#22C55E;color:#fff;border:none;border-radius:12px;padding:10px 24px;font-size:16px;font-weight:900;cursor:pointer;">追加する</button>
-  <button onclick="document.getElementById('install-banner').classList.remove('show')" style="background:none;border:none;font-size:22px;color:#888;cursor:pointer;">✕</button>
-</div>
 <script>
-
-// ════════════════════════════════
-// iOS PWA: スクロールバウンス防止 & 横向き固定
-// ════════════════════════════════
-document.addEventListener('touchmove', function(e) {
-  if (e.target === document.body) e.preventDefault();
-}, { passive: false });
-try {
-  if (screen.orientation && screen.orientation.lock) {
-    screen.orientation.lock('landscape').catch(() => {});
-  }
-} catch(e) {}
-
-// ════════════════════════════════
-// Supabase 設定
-// ★ デプロイ後にご自身のURLとAnon Keyに書き換えてください
-// ════════════════════════════════
-const SUPABASE_URL      = 'https://YOUR_PROJECT.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
-
-// ════════════════════════════════
-// 管理画面URL・名前データ読み込み
-// ════════════════════════════════
-const STORAGE_KEY = 'nokatsu_admin_urls';
-function loadAdminUrls() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
-  catch(e) { return {}; }
-}
-
 // ════════════════════════════════
 // マスターデータ
 // ════════════════════════════════
 const TRAINING_CFG = {
-  calc:  { label:'計算力',  emoji:'🔢', hdrGrad:'linear-gradient(135deg,#10B981 0%,#059669 100%)', hdrShadow:'rgba(16,185,129,0.3)', color:'#10B981', border:'#10B981', bg:'linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%)', itemBg:'linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%)',
-    items:[{id:1,name:'お釣りはいくら？',emoji:'💰',url:'https://change-calculation-b-pg3q.bolt.host/'},{id:2,name:'足して10（テン）パズル',emoji:'🔟',url:'https://sum-10-puzzle-pwa-ba7l.bolt.host/'},{id:3,name:'虫食い算',emoji:'🐛',url:null},{id:4,name:'フラッシュ連続足し算',emoji:'⚡',url:null},{id:5,name:'カレンダー計算',emoji:'📅',url:null},{id:6,name:'',emoji:'',url:null},{id:7,name:'',emoji:'',url:null},{id:8,name:'',emoji:'',url:null},{id:9,name:'',emoji:'',url:null},{id:10,name:'',emoji:'',url:null}]},
-  obs:   { label:'観察力',  emoji:'👀', hdrGrad:'linear-gradient(135deg,#3B82F6 0%,#1E40AF 100%)', hdrShadow:'rgba(59,130,246,0.3)', color:'#3B82F6', border:'#3B82F6', bg:'linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%)', itemBg:'linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%)',
-    items:[{id:1,name:'昭和の風景まちがい探し',emoji:'🏠',url:null},{id:2,name:'どこが変わった？',emoji:'🔍',url:null},{id:3,name:'シルエットクイズ',emoji:'🌑',url:null},{id:4,name:'仲間はずれ探し',emoji:'🎯',url:null},{id:5,name:'探し物競争',emoji:'🔎',url:null},{id:6,name:'',emoji:'',url:null},{id:7,name:'',emoji:'',url:null},{id:8,name:'',emoji:'',url:null},{id:9,name:'',emoji:'',url:null},{id:10,name:'',emoji:'',url:null}]},
-  mem:   { label:'記憶力',  emoji:'🧠', hdrGrad:'linear-gradient(135deg,#F59E0B 0%,#D97706 100%)', hdrShadow:'rgba(245,158,11,0.3)', color:'#F59E0B', border:'#F59E0B', bg:'linear-gradient(135deg,#FFFBEB 0%,#FEF3C7 100%)', itemBg:'linear-gradient(135deg,#FFFBEB 0%,#FEF3C7 100%)',
-    items:[{id:1,name:'昭和の思い出・神経衰弱',emoji:'🎴',url:null},{id:2,name:'お使いマスター',emoji:'🛒',url:'https://errand-master-pwa-a0hf.bolt.host'},{id:3,name:'順番ピカピカ',emoji:'✨',url:null},{id:4,name:'顔と名前、覚えてる？',emoji:'👤',url:null},{id:5,name:'どこに隠した？',emoji:'🔍',url:null},{id:6,name:'',emoji:'',url:null},{id:7,name:'',emoji:'',url:null},{id:8,name:'',emoji:'',url:null},{id:9,name:'',emoji:'',url:null},{id:10,name:'',emoji:'',url:null}]},
-  jud:   { label:'判断力',  emoji:'⚖️', hdrGrad:'linear-gradient(135deg,#8B5CF6 0%,#6D28D9 100%)', hdrShadow:'rgba(139,92,246,0.3)', color:'#8B5CF6', border:'#8B5CF6', bg:'linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%)', itemBg:'linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%)',
-    items:[{id:1,name:'後出しじゃんけん',emoji:'✊',url:null},{id:2,name:'ことば色パズル',emoji:'🎨',url:null},{id:3,name:'ゴミの分別達人',emoji:'♻️',url:null},{id:4,name:'交通標識クイズ',emoji:'🚦',url:null},{id:5,name:'道草迷路',emoji:'🌿',url:null},{id:6,name:'',emoji:'',url:null},{id:7,name:'',emoji:'',url:null},{id:8,name:'',emoji:'',url:null},{id:9,name:'',emoji:'',url:null},{id:10,name:'',emoji:'',url:null}]},
-  int:   { label:'直感力',  emoji:'✨', hdrGrad:'linear-gradient(135deg,#3B82F6 0%,#1E40AF 100%)', hdrShadow:'rgba(59,130,246,0.3)', color:'#EC4899', border:'#EC4899', bg:'linear-gradient(135deg,#FDF2F8 0%,#FCE7F3 100%)', itemBg:'linear-gradient(135deg,#FDF2F8 0%,#FCE7F3 100%)',
-    items:[{id:1,name:'瞬間記憶',emoji:'⚡',url:null},{id:2,name:'どっちが多い？',emoji:'🔢',url:null},{id:3,name:'ピタリと止めろ',emoji:'🎯',url:null},{id:4,name:'一部から全体を推測',emoji:'🧩',url:null},{id:5,name:'ハイ＆ロー',emoji:'🎲',url:null},{id:6,name:'',emoji:'',url:null},{id:7,name:'',emoji:'',url:null},{id:8,name:'',emoji:'',url:null},{id:9,name:'',emoji:'',url:null},{id:10,name:'',emoji:'',url:null}]},
-  react: { label:'反応力',  emoji:'⚡', hdrGrad:'linear-gradient(135deg,#EF4444 0%,#DC2626 100%)', hdrShadow:'rgba(239,68,68,0.3)', color:'#EF4444', border:'#EF4444', bg:'linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%)', itemBg:'linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%)',
-    items:[{id:1,name:'ぽこぽこモグラたたき',emoji:'🔨',url:null},{id:2,name:'落ち葉キャッチ',emoji:'🍂',url:null},{id:3,name:'右へ左へ仕分け人',emoji:'↔️',url:null},{id:4,name:'信号機タップ',emoji:'🚦',url:null},{id:5,name:'走る新幹線 動体視力',emoji:'🚄',url:null},{id:6,name:'',emoji:'',url:null},{id:7,name:'',emoji:'',url:null},{id:8,name:'',emoji:'',url:null},{id:9,name:'',emoji:'',url:null},{id:10,name:'',emoji:'',url:null}]},
-  know:  { label:'知力',    emoji:'📚', hdrGrad:'linear-gradient(135deg,#3B82F6 0%,#1E40AF 100%)', hdrShadow:'rgba(59,130,246,0.3)', color:'#6366F1', border:'#6366F1', bg:'linear-gradient(135deg,#EEF2FF 0%,#E0E7FF 100%)', itemBg:'linear-gradient(135deg,#EEF2FF 0%,#E0E7FF 100%)',
-    items:[{id:1,name:'都道府県シルエット',emoji:'🗾',url:null},{id:2,name:'四字熟語・ことわざ',emoji:'📝',url:null},{id:3,name:'難読漢字クイズ',emoji:'📖',url:null},{id:4,name:'レトロクイズ',emoji:'📻',url:null},{id:5,name:'名産品ご当地クイズ',emoji:'🏮',url:null},{id:6,name:'',emoji:'',url:null},{id:7,name:'',emoji:'',url:null},{id:8,name:'',emoji:'',url:null},{id:9,name:'',emoji:'',url:null},{id:10,name:'',emoji:'',url:null}]},
+  calc:  {label:'計算力', emoji:'🔢', hdrGrad:'linear-gradient(135deg,#10B981 0%,#059669 100%)', shadow:'rgba(16,185,129,0.3)', color:'#10B981', bg:'linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%)',
+    items:[{id:1,name:'お釣りはいくら？',emoji:'💰'},{id:2,name:'足して10（テン）パズル',emoji:'🔟'},{id:3,name:'虫食い算',emoji:'🐛'},{id:4,name:'フラッシュ連続足し算',emoji:'⚡'},{id:5,name:'カレンダー計算',emoji:'📅'},{id:6,name:'',emoji:''},{id:7,name:'',emoji:''},{id:8,name:'',emoji:''},{id:9,name:'',emoji:''},{id:10,name:'',emoji:''}]},
+  obs:   {label:'観察力', emoji:'👀', hdrGrad:'linear-gradient(135deg,#3B82F6 0%,#1E40AF 100%)', shadow:'rgba(59,130,246,0.3)', color:'#3B82F6', bg:'linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%)',
+    items:[{id:1,name:'昭和の風景まちがい探し',emoji:'🏠'},{id:2,name:'どこが変わった？',emoji:'🔍'},{id:3,name:'シルエットクイズ',emoji:'🌑'},{id:4,name:'仲間はずれ探し',emoji:'🎯'},{id:5,name:'探し物競争',emoji:'🔎'},{id:6,name:'',emoji:''},{id:7,name:'',emoji:''},{id:8,name:'',emoji:''},{id:9,name:'',emoji:''},{id:10,name:'',emoji:''}]},
+  mem:   {label:'記憶力', emoji:'🧠', hdrGrad:'linear-gradient(135deg,#F59E0B 0%,#D97706 100%)', shadow:'rgba(245,158,11,0.3)', color:'#F59E0B', bg:'linear-gradient(135deg,#FFFBEB 0%,#FEF3C7 100%)',
+    items:[{id:1,name:'昭和の思い出・神経衰弱',emoji:'🎴'},{id:2,name:'お使いマスター',emoji:'🛒'},{id:3,name:'順番ピカピカ',emoji:'✨'},{id:4,name:'顔と名前、覚えてる？',emoji:'👤'},{id:5,name:'どこに隠した？',emoji:'🔍'},{id:6,name:'',emoji:''},{id:7,name:'',emoji:''},{id:8,name:'',emoji:''},{id:9,name:'',emoji:''},{id:10,name:'',emoji:''}]},
+  jud:   {label:'判断力', emoji:'⚖️', hdrGrad:'linear-gradient(135deg,#8B5CF6 0%,#6D28D9 100%)', shadow:'rgba(139,92,246,0.3)', color:'#8B5CF6', bg:'linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%)',
+    items:[{id:1,name:'後出しじゃんけん',emoji:'✊'},{id:2,name:'ことば色パズル',emoji:'🎨'},{id:3,name:'ゴミの分別達人',emoji:'♻️'},{id:4,name:'交通標識クイズ',emoji:'🚦'},{id:5,name:'道草迷路',emoji:'🌿'},{id:6,name:'',emoji:''},{id:7,name:'',emoji:''},{id:8,name:'',emoji:''},{id:9,name:'',emoji:''},{id:10,name:'',emoji:''}]},
+  int:   {label:'直感力', emoji:'✨', hdrGrad:'linear-gradient(135deg,#3B82F6 0%,#1E40AF 100%)', shadow:'rgba(59,130,246,0.3)', color:'#EC4899', bg:'linear-gradient(135deg,#FDF2F8 0%,#FCE7F3 100%)',
+    items:[{id:1,name:'瞬間記憶',emoji:'⚡'},{id:2,name:'どっちが多い？',emoji:'🔢'},{id:3,name:'ピタリと止めろ',emoji:'🎯'},{id:4,name:'一部から全体を推測',emoji:'🧩'},{id:5,name:'ハイ＆ロー',emoji:'🎲'},{id:6,name:'',emoji:''},{id:7,name:'',emoji:''},{id:8,name:'',emoji:''},{id:9,name:'',emoji:''},{id:10,name:'',emoji:''}]},
+  react: {label:'反応力', emoji:'⚡', hdrGrad:'linear-gradient(135deg,#EF4444 0%,#DC2626 100%)', shadow:'rgba(239,68,68,0.3)', color:'#EF4444', bg:'linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%)',
+    items:[{id:1,name:'ぽこぽこモグラたたき',emoji:'🔨'},{id:2,name:'落ち葉キャッチ',emoji:'🍂'},{id:3,name:'右へ左へ仕分け人',emoji:'↔️'},{id:4,name:'信号機タップ',emoji:'🚦'},{id:5,name:'走る新幹線 動体視力',emoji:'🚄'},{id:6,name:'',emoji:''},{id:7,name:'',emoji:''},{id:8,name:'',emoji:''},{id:9,name:'',emoji:''},{id:10,name:'',emoji:''}]},
+  know:  {label:'知力',   emoji:'📚', hdrGrad:'linear-gradient(135deg,#3B82F6 0%,#1E40AF 100%)', shadow:'rgba(59,130,246,0.3)', color:'#6366F1', bg:'linear-gradient(135deg,#EEF2FF 0%,#E0E7FF 100%)',
+    items:[{id:1,name:'都道府県シルエット',emoji:'🗾'},{id:2,name:'四字熟語・ことわざ',emoji:'📝'},{id:3,name:'難読漢字クイズ',emoji:'📖'},{id:4,name:'レトロクイズ',emoji:'📻'},{id:5,name:'名産品ご当地クイズ',emoji:'🏮'},{id:6,name:'',emoji:''},{id:7,name:'',emoji:''},{id:8,name:'',emoji:''},{id:9,name:'',emoji:''},{id:10,name:'',emoji:''}]},
 };
 
 const COMP_COURSES = [
-  {
-    id:'spp1', name:'総合テスト１', sub:'基本概要コース',
-    emoji:'📋', color:'#16A34A', light:'#DCFCE7', desc:'約10分', badge:'人気', badgeColor:'#15803D',
-    games:[
-      {id:'spp1-1',name:'ことば色パズル',    emoji:'🎨',color:'#8B5CF6',light:'#EDE9FE',url:null},
-      {id:'spp1-2',name:'頭の元気チェック',  emoji:'🧠',color:'#22C55E',light:'#DCFCE7',url:null},
-      {id:'spp1-3',name:'数字当てパズル',    emoji:'🔢',color:'#3B82F6',light:'#DBEAFE',url:null},
-      {id:'spp1-4',name:'認知症リスク問診票',emoji:'📝',color:'#F59E0B',light:'#FEF3C7',url:null},
-    ]
-  },
-  {
-    id:'spp2', name:'総合テスト２', sub:'詳細調査コース',
-    emoji:'🔬', color:'#2563EB', light:'#DBEAFE', desc:'約15分', badge:'くわしく', badgeColor:'#1D4ED8',
-    games:[
-      {id:'spp2-1',name:'カラータイルアタック25',emoji:'🎨',color:'#3B82F6',light:'#DBEAFE',url:null},
-      {id:'spp2-2',name:'頭元気チェックver2',   emoji:'🧠',color:'#22C55E',light:'#DCFCE7',url:null},
-      {id:'spp2-3',name:'数字当てパズルver3',   emoji:'🔢',color:'#14B8A6',light:'#CCFBF1',url:null},
-      {id:'spp2-4',name:'認知症リスク問診票',   emoji:'📝',color:'#F59E0B',light:'#FEF3C7',url:null},
-    ]
-  },
+  {id:'spp1',name:'総合テスト１',sub:'SPP1',desc:'約10分',color:'#22C55E',light:'#DCFCE7',directUrl:'https://mf-check.bolt.host/',games:[
+    {id:'spp1-1',name:'ことば色パズル',    emoji:'🎨',color:'#8B5CF6',bg:'#EDE9FE'},
+    {id:'spp1-2',name:'頭の元気チェック',  emoji:'🧠',color:'#22C55E',bg:'#DCFCE7'},
+    {id:'spp1-3',name:'数字当てパズル',    emoji:'🔢',color:'#3B82F6',bg:'#DBEAFE'},
+    {id:'spp1-4',name:'認知症リスク問診票',emoji:'📝',color:'#F59E0B',bg:'#FEF3C7'},
+  ]},
+  {id:'spp2',name:'総合テスト２',sub:'SPP2',desc:'約15分',color:'#F97316',light:'#FFEDD5',games:[
+    {id:'spp2-1',name:'カラータイルアタック25',emoji:'🎨',color:'#3B82F6',bg:'#DBEAFE'},
+    {id:'spp2-2',name:'頭元気チェックver2',   emoji:'🧠',color:'#22C55E',bg:'#DCFCE7'},
+    {id:'spp2-3',name:'数字当てパズルver3',   emoji:'🔢',color:'#14B8A6',bg:'#CCFBF1'},
+    {id:'spp2-4',name:'認知症リスク問診票',   emoji:'📝',color:'#F59E0B',bg:'#FEF3C7'},
+  ]},
+  {id:'spp3a',name:'総合テスト３-１',sub:'SPP3',desc:'約15分',color:'#8B5CF6',light:'#EDE9FE',games:[
+    {id:'spp3a-1',name:'ゲーム①',emoji:'🎯',color:'#8B5CF6',bg:'#EDE9FE'},
+    {id:'spp3a-2',name:'ゲーム②',emoji:'🧩',color:'#6366F1',bg:'#E0E7FF'},
+    {id:'spp3a-3',name:'ゲーム③',emoji:'⚡',color:'#EC4899',bg:'#FCE7F3'},
+    {id:'spp3a-4',name:'ゲーム④',emoji:'📝',color:'#F59E0B',bg:'#FEF3C7'},
+  ]},
+  {id:'spp3b',name:'総合テスト３-２',sub:'SPP3',desc:'約15分',color:'#3B82F6',light:'#DBEAFE',games:[
+    {id:'spp3b-1',name:'ゲーム①',emoji:'🎯',color:'#3B82F6',bg:'#DBEAFE'},
+    {id:'spp3b-2',name:'ゲーム②',emoji:'🧩',color:'#14B8A6',bg:'#CCFBF1'},
+    {id:'spp3b-3',name:'ゲーム③',emoji:'⚡',color:'#EF4444',bg:'#FEE2E2'},
+    {id:'spp3b-4',name:'ゲーム④',emoji:'📝',color:'#F59E0B',bg:'#FEF3C7'},
+  ]},
 ];
 
 // ════════════════════════════════
-// 管理画面URLをデータに注入
+// config.js の GAME_CONFIG を注入
 // ════════════════════════════════
 (function injectUrls() {
-  const urls  = loadAdminUrls();
-  const names = JSON.parse(localStorage.getItem('nokatsu_admin_names') || '{}');
-  Object.entries(TRAINING_CFG).forEach(([key, cfg]) => {
-    cfg.items.forEach(item => {
-      const adminId = key + '-' + item.id;
-      if (urls[adminId])  item.url  = urls[adminId];
-      if (names[adminId]) item.name = names[adminId];
+  if (typeof GAME_CONFIG === 'undefined') return;
+  const cfg = GAME_CONFIG;
+  // 総合テスト
+  COMP_COURSES.forEach(course => {
+    const src = cfg[course.id];
+    if (!src) return;
+    if (src.name)  course.name = src.name;
+    if (src.sub)   course.sub  = src.sub;
+    if (src.desc)  course.desc = src.desc;
+    if (src.games) src.games.forEach(sg => {
+      const g = course.games.find(g => g.id === sg.id);
+      if (g) { if (sg.name) g.name = sg.name; if (sg.url) g.url = sg.url; }
     });
   });
-  COMP_COURSES.forEach(course => {
-    course.games.forEach(game => {
-      if (urls[game.id])  game.url  = urls[game.id];
-      if (names[game.id]) game.name = names[game.id];
+  // トレーニング
+  if (cfg.training) cfg.training.forEach(catCfg => {
+    const cat = TRAINING_CFG[catCfg.key];
+    if (!cat) return;
+    if (catCfg.label) cat.label = catCfg.label;
+    if (catCfg.games) catCfg.games.forEach(sg => {
+      const num = parseInt(sg.id.split('-')[1]);
+      const item = cat.items.find(i => i.id === num);
+      if (item) { if (sg.name) item.name = sg.name; if (sg.url) item.url = sg.url; }
     });
   });
 })();
@@ -619,8 +568,7 @@ const COMP_COURSES = [
 // 状態変数
 // ════════════════════════════════
 const trChecked = {};
-let gameQueue = [], gameCompleted = [], progReturn = 'page-menu', currentIdx = 0;
-let currentCourse = null;
+let gameQueue=[], gameCompleted=[], progReturn='page-menu', currentIdx=0, currentCourse=null;
 
 // ════════════════════════════════
 // ナビゲーション
@@ -629,13 +577,10 @@ function go(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) el.classList.add('active');
-  if (!ttsEnabled) return;
-  const titles = {
-    'page-login':'ログイン', 'page-top':'トップページ', 'page-menu':'メニュー',
-    'page-comp':'総合テスト', 'page-tr-select':'トレーニング選択',
-    'page-progress':'ゲーム進行', 'page-settings':'設定', 'page-coming':'準備中のページ',
-  };
-  if (titles[id]) speak(titles[id]);
+  if (ttsEnabled) {
+    const t = {'page-top':'トップ','page-menu':'メニュー','page-comp':'総合テスト','page-tr-select':'トレーニング選択','page-progress':'ゲーム進行','page-settings':'設定'};
+    if (t[id]) speak(t[id]);
+  }
 }
 
 // ════════════════════════════════
@@ -646,56 +591,58 @@ Object.entries(TRAINING_CFG).forEach(([key, cfg]) => {
   if (!el) return;
   trChecked[key] = new Set();
   el.innerHTML = `
-    <div class="hdr" style="background:${cfg.hdrGrad};box-shadow:0 4px 20px ${cfg.hdrShadow};">
-      <button class="hdr-back" onclick="go('page-tr-select')">‹ もどる</button>
-      <div class="hdr-logo"><div style="width:36px;height:36px;background:${cfg.itemBg};border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;">${cfg.emoji}</div><span class="hdr-logo-text">${cfg.label}トレーニング</span></div>
-      <div class="hdr-right"></div>
-    </div>
-    <div class="tr-body">
-      <div class="tr-head">
-        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px;">
-          <span style="font-size:48px;">${cfg.emoji}</span>
-          <div class="tr-head-title" style="color:${cfg.color};">${cfg.label}</div>
+    <header style="display:flex;align-items:center;justify-content:space-between;padding:0 20px;min-height:52px;background:${cfg.hdrGrad};box-shadow:0 4px 20px ${cfg.shadow};flex-shrink:0">
+      <button onclick="go('page-tr-select')" style="display:flex;align-items:center;gap:8px;background:none;border:none;color:#fff;font-size:22px;font-weight:700;cursor:pointer">‹ もどる</button>
+      <div style="display:flex;align-items:center;gap:12px"><span style="font-size:32px">🧠</span><span style="font-size:32px;font-weight:900;color:#fff;letter-spacing:0.08em">まいにち脳活</span></div>
+      <div style="width:120px"></div>
+    </header>
+    <div style="flex:1;display:flex;flex-direction:column;padding:16px 64px 20px;gap:14px;overflow:hidden">
+      <div style="text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px">
+          <span style="font-size:48px">${cfg.emoji}</span>
+          <h1 style="font-size:36px;font-weight:900;color:${cfg.color}">${cfg.label}</h1>
         </div>
-        <div class="tr-head-sub">トレーニングを選んでください</div>
+        <p style="color:#4B5563;font-weight:700;font-size:24px">トレーニングを選んでください</p>
       </div>
-      <div class="tr-grid" id="tr-grid-${key}"></div>
-      <div class="tr-footer">
-        <button class="btn-start" id="tr-start-${key}" disabled onclick="startTraining('${key}')"
-          style="background:linear-gradient(135deg,${cfg.color} 0%,${cfg.color}cc 100%);border-radius:16px;padding:16px 48px;font-size:26px;letter-spacing:0.1em;">
-          スタート →
-        </button>
+      <div id="tr-grid-${key}" style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;overflow:hidden"></div>
+      <div style="display:flex;justify-content:flex-end">
+        <button id="tr-start-${key}" disabled onclick="startTraining('${key}')" style="background:linear-gradient(135deg,${cfg.color} 0%,${cfg.color}cc 100%);color:#fff;border:none;border-radius:16px;padding:10px 32px;font-size:20px;font-weight:900;cursor:pointer;letter-spacing:0.1em;opacity:0.4;font-family:inherit">スタート →</button>
       </div>
     </div>
-    <div class="ftr">トレーニングを選んでスタートボタンを押してください</div>`;
+    <div style="text-align:center;padding:12px;color:#9CA3AF;font-size:18px;flex-shrink:0">トレーニングを選んでスタートボタンを押してください</div>`;
   renderTrGrid(key);
 });
 
 function renderTrGrid(key) {
-  const cfg = TRAINING_CFG[key];
-  const el = document.getElementById('tr-grid-' + key);
+  const cfg = TRAINING_CFG[key], el = document.getElementById('tr-grid-' + key);
   if (!el) return;
   const checked = trChecked[key];
   el.innerHTML = '';
   cfg.items.forEach(item => {
     const div = document.createElement('div');
     const isEmpty = !item.name, sel = !isEmpty && checked.has(item.id);
-    div.className = 'tr-item' + (isEmpty ? ' empty' : '');
     if (!isEmpty) {
-      div.style.cssText = `border-color:${sel ? cfg.color : cfg.border};background:${sel ? cfg.itemBg : '#fff'};`;
+      // 選択状態: カテゴリ色でハイライト / 未選択: 白背景
+      div.style.cssText = `display:flex;align-items:center;gap:12px;border-radius:14px;padding:12px 16px;cursor:pointer;border:2.5px solid ${sel ? cfg.color : '#E5E7EB'};background:${sel ? cfg.bg : '#fff'};box-shadow:0 2px 8px rgba(0,0,0,0.05);transition:transform 0.12s,box-shadow 0.12s`;
       div.innerHTML = `
-        <div class="tr-checkbox" style="${sel ? 'background:' + cfg.color + ';border-color:' + cfg.color + ';' : ''}">${sel ? '<span style="color:#fff;font-weight:900;font-size:18px;">✓</span>' : ''}</div>
-        <span class="tr-emoji">${item.emoji}</span>
-        <span class="tr-name" style="color:${sel ? cfg.color : '#374151'};">${item.name}</span>
-        ${!item.url ? '<span style="margin-left:auto;font-size:13px;color:#9CA3AF;background:#F3F4F6;padding:3px 10px;border-radius:100px;flex-shrink:0;">準備中</span>' : ''}`;
+        <div style="width:28px;height:28px;border-radius:7px;border:2.5px solid ${sel ? cfg.color : '#D1D5DB'};background:${sel ? cfg.color : '#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          ${sel ? '<span style="color:#fff;font-weight:900;font-size:14px">✓</span>' : ''}
+        </div>
+        <span style="font-size:28px;line-height:1;flex-shrink:0">${item.emoji}</span>
+        <span style="font-size:17px;font-weight:${sel ? '900' : '700'};color:${sel ? cfg.color : '#374151'};flex:1;text-align:left">${item.name}</span>
+        ${!item.url ? '<span style="font-size:11px;color:#9CA3AF;background:#F3F4F6;padding:2px 8px;border-radius:100px;flex-shrink:0;white-space:nowrap">準備中</span>' : ''}`;
+      div.onmouseenter = () => { if (!sel) { div.style.transform='translateY(-1px)'; div.style.boxShadow='0 4px 14px rgba(0,0,0,0.1)'; } };
+      div.onmouseleave = () => { div.style.transform=''; div.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'; };
       div.onclick = () => {
         if (checked.has(item.id)) checked.delete(item.id); else checked.add(item.id);
         renderTrGrid(key);
-        document.getElementById('tr-start-' + key).disabled = checked.size === 0;
+        const btn = document.getElementById('tr-start-' + key);
+        btn.disabled = checked.size === 0;
+        btn.style.opacity = checked.size > 0 ? '1' : '0.4';
       };
     } else {
-      div.style.cssText = 'border-color:#E5E7EB;border-style:dashed;background:#FAFAFA;cursor:default;';
-      div.innerHTML = `<div class="tr-checkbox" style="border-color:#E5E7EB;"></div><span style="color:#D1D5DB;font-size:18px;font-weight:700;margin-left:8px;">空き枠</span>`;
+      div.style.cssText = 'display:flex;align-items:center;gap:12px;border-radius:14px;padding:12px 16px;border:2px dashed #E5E7EB;background:#FAFAFA;opacity:0.4';
+      div.innerHTML = '<div style="width:28px;height:28px;border-radius:7px;border:2px solid #E5E7EB;flex-shrink:0"></div><span style="color:#D1D5DB;font-size:16px;font-weight:600">空き枠</span>';
     }
     el.appendChild(div);
   });
@@ -704,69 +651,78 @@ function renderTrGrid(key) {
 function startTraining(key) {
   const cfg = TRAINING_CFG[key];
   const items = cfg.items.filter(i => trChecked[key].has(i.id) && i.url)
-    .map(i => ({ name: i.name, emoji: i.emoji, color: cfg.color, light: cfg.itemBg, url: i.url }));
+    .map(i => ({name:i.name, emoji:i.emoji, color:cfg.color, light:cfg.bg, url:i.url}));
   if (!items.length) { alert('URLが設定されているゲームを選択してください'); return; }
-  gameQueue = items; gameCompleted = new Array(items.length).fill(false); currentIdx = 0;
-  progReturn = 'page-tr-' + key;
-  renderProgress(); go('page-progress');
+  gameQueue=items; gameCompleted=new Array(items.length).fill(false); currentIdx=0;
+  progReturn='page-tr-'+key; renderProgress(); go('page-progress');
 }
 
 // ════════════════════════════════
 // 総合テスト
 // ════════════════════════════════
-let currentCourseId = null;
-
 function startCourse(courseId) {
+  // メニューから直接コース詳細へ（基本概要コースの場合）
+  showCourseDetail(courseId);
+}
+
+function showCourseDetail(courseId) {
   const course = COMP_COURSES.find(c => c.id === courseId);
   if (!course) return;
   currentCourse = course;
-  currentCourseId = courseId;
 
-  document.getElementById('comp-hdr-title').textContent = 'まいにち脳活 — ' + course.name;
-  document.getElementById('comp-hdr').style.background = 'linear-gradient(135deg,' + course.color + ' 0%,#0a5a30 100%)';
+  // directUrlがある場合は直接ゲームを開く
+  if (course.directUrl) {
+    openGamePlayer(course.directUrl, course.name);
+    progReturn = 'page-comp';
+    return;
+  }
 
-  const badge = document.getElementById('comp-course-badge');
-  badge.textContent = course.badge;
-  badge.style.background = course.light;
-  badge.style.color = course.color;
-  document.getElementById('comp-course-title').textContent = course.name + '（' + course.sub + '）';
-  document.getElementById('comp-course-desc').textContent = course.games.length + 'つのチェック ／ ' + course.desc;
+  // ヘッダー更新
+  const hdr = document.getElementById('comp-detail-header');
+  if (hdr) hdr.style.background = 'linear-gradient(135deg,' + course.color + ' 0%,#0a3a20 100%)';
+  const hdrTitle = document.getElementById('comp-detail-header-title');
+  if (hdrTitle) hdrTitle.textContent = course.name;
 
-  const list = document.getElementById('comp-games-list');
-  list.innerHTML = '';
+  // タイトルバー
+  const titleEl = document.getElementById('comp-detail-title');
+  const subEl   = document.getElementById('comp-detail-sub');
+  if (titleEl) titleEl.textContent = course.name + '（' + course.sub + '）';
+  if (subEl)   subEl.textContent   = course.games.length + 'つのチェックを順番に実施（' + course.desc + '）';
+
+  // ゲームグリッド
+  const grid = document.getElementById('comp-detail-games');
+  if (!grid) return;
+  grid.innerHTML = '';
   course.games.forEach((g, i) => {
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:20px;background:#fff;border-radius:18px;border:3px solid ' + g.light + ';padding:18px 28px;box-shadow:0 3px 12px rgba(0,0,0,0.05);';
-    row.innerHTML =
-      '<div style="width:44px;height:44px;border-radius:12px;background:' + g.color + ';color:#fff;font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">' + (i+1) + '</div>' +
-      '<div style="width:48px;height:48px;border-radius:13px;background:' + g.light + ';display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">' + g.emoji + '</div>' +
-      '<div style="flex:1;">' +
-        '<div style="font-size:22px;font-weight:900;color:#111;">' + g.name + '</div>' +
-        '<div style="font-size:15px;color:' + (g.url ? '#16A34A' : '#9CA3AF') + ';font-weight:700;margin-top:3px;">' + (g.url ? '✓ URL設定済み' : '準備中（URLを設定してください）') + '</div>' +
-      '</div>' +
-      '<div style="font-size:28px;">' + g.emoji + '</div>';
-    list.appendChild(row);
+    const card = document.createElement('div');
+    card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;border:2.5px solid ' + g.color + ';background:' + g.bg + ';box-shadow:0 2px 8px rgba(0,0,0,0.05);transition:transform 0.15s';
+    card.onmouseenter = () => { card.style.transform='translateY(-2px)'; };
+    card.onmouseleave = () => { card.style.transform=''; };
+    card.innerHTML =
+      '<div style="width:36px;height:36px;border-radius:10px;background:' + g.color + ';color:#fff;font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">' + (i+1) + '</div>' +
+      '<div style="width:40px;height:40px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.08)">' + g.emoji + '</div>' +
+      '<div style="flex:1">' +
+        '<div style="font-size:16px;font-weight:900;color:#1F2937;line-height:1.3">' + g.name + '</div>' +
+        '<div style="font-size:12px;color:' + (g.url ? '#16A34A' : '#9CA3AF') + ';margin-top:2px;font-weight:600">' + (g.url ? '✓ 設定済み' : '準備中') + '</div>' +
+      '</div>';
+    grid.appendChild(card);
   });
 
-  progReturn = 'page-comp';
-  go('page-comp');
+  progReturn = 'page-comp-detail';
+  go('page-comp-detail');
 }
 
 function launchCourse() {
   if (!currentCourse) return;
   const items = currentCourse.games.filter(g => g.url)
-    .map(g => ({ name: g.name, emoji: g.emoji, color: g.color, light: g.light, url: g.url }));
-  if (items.length === 0) {
-    alert('このコースはURLが設定されていません。\n管理画面でURLを設定してください。');
-    return;
-  }
+    .map(g => ({name:g.name, emoji:g.emoji, color:g.color, light:g.bg, url:g.url}));
+  if (!items.length) { alert('このコースはURLが設定されていません。\nconfig.jsでURLを設定してください。'); return; }
   if (items.length < currentCourse.games.length) {
     const missing = currentCourse.games.filter(g => !g.url).map(g => g.name).join('、');
-    if (!confirm('以下のゲームはURLが未設定のためスキップされます：\n' + missing + '\n\n残り' + items.length + 'つで開始しますか？')) return;
+    if (!confirm('以下はURLが未設定のためスキップされます：\n' + missing + '\n\n残り' + items.length + 'つで開始しますか？')) return;
   }
-  gameQueue = items; gameCompleted = new Array(items.length).fill(false); currentIdx = 0;
-  progReturn = 'page-comp';
-  renderProgress(); go('page-progress');
+  gameQueue=items; gameCompleted=new Array(items.length).fill(false); currentIdx=0;
+  progReturn='page-comp-detail'; renderProgress(); go('page-progress');
 }
 
 // ════════════════════════════════
@@ -777,404 +733,124 @@ function renderProgress() {
   if (!list) return;
   list.innerHTML = '';
   const done = gameCompleted.filter(Boolean).length;
-  gameQueue.forEach((g, i) => {
-    const isDone = gameCompleted[i], isCur = i === currentIdx && !isDone, isLock = !isDone && i > currentIdx;
+  gameQueue.forEach((g,i) => {
+    const isDone=gameCompleted[i], isCur=i===currentIdx&&!isDone, isLock=!isDone&&i>currentIdx;
     const row = document.createElement('div');
-    row.className = 'prog-row' + (isDone ? ' done' : isCur ? ' current' : isLock ? ' locked' : '');
-    const sc = isDone ? '#16A34A' : isCur ? '#EA580C' : '#9CA3AF';
-    const st = isDone ? '完了しました' : isCur ? '現在のゲーム' : '待機中';
-    const btns = (!isDone && !isLock)
-      ? `<div class="prog-btns"><button class="pbtn-open" onclick="openGame(${i})">▶ ${isCur ? '開始' : '再開'}</button><button class="pbtn-done" onclick="markDone(${i})">完了</button></div>`
-      : isDone ? `<div style="width:44px;height:44px;background:#DCFCE7;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#16A34A;">✓</div>` : '';
+    row.style.cssText = `display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;border:3px solid ${isDone?'#22C55E':isCur?'#F97316':'#E5E7EB'};background:${isDone?'linear-gradient(135deg,#F0FDF4,#DCFCE7)':isCur?'linear-gradient(135deg,#FFF7ED,#FFEDD5)':'#F9FAFB'};box-shadow:${isCur?'0 6px 20px rgba(249,115,22,0.3)':isDone?'0 4px 12px rgba(34,197,94,0.2)':'0 2px 8px rgba(0,0,0,0.05)'};opacity:${isLock?'0.5':'1'}`;
     row.innerHTML = `
-      <div class="prog-badge" style="background:${isDone ? '#22C55E' : isCur ? '#F97316' : '#9CA3AF'};">${isDone ? '✓' : i+1}</div>
-      <div class="prog-icon" style="background:${g.light};">${g.emoji}</div>
-      <div style="flex:1;"><div class="prog-name">${g.name}</div><div class="prog-status" style="color:${sc};">${st}</div></div>
-      ${btns}`;
+      <div style="width:38px;height:38px;border-radius:10px;background:${isDone?'#22C55E':isCur?'#F97316':'#9CA3AF'};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;flex-shrink:0">${isDone?'✓':i+1}</div>
+      <div style="width:34px;height:34px;border-radius:9px;background:${g.light};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${g.emoji}</div>
+      <div style="flex:1"><div style="font-size:16px;font-weight:700;color:#1F2937">${g.name}</div><div style="font-size:12px;font-weight:700;color:${isDone?'#16A34A':isCur?'#EA580C':'#9CA3AF'};margin-top:3px">${isDone?'完了しました':isCur?'現在のゲーム':'待機中'}</div></div>
+      ${!isDone&&!isLock?`<div style="display:flex;gap:8px"><button onclick="openGame(${i})" style="background:#3B82F6;color:#fff;border:none;border-radius:12px;padding:10px 20px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit">▶ ${isCur?'開始':'再開'}</button><button onclick="markDone(${i})" style="background:#fff;color:#22C55E;border:2px solid #22C55E;border-radius:12px;padding:10px 20px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit">完了</button></div>`:isDone?'<div style="width:44px;height:44px;background:#DCFCE7;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#16A34A">✓</div>':''}`;
     list.appendChild(row);
   });
-  const doneEl = document.getElementById('prog-done');
-  const totalEl = document.getElementById('prog-total');
-  const barEl = document.getElementById('prog-bar');
-  const pctEl = document.getElementById('prog-pct');
-  const countEl = document.getElementById('prog-count');
-  if (doneEl) doneEl.textContent = done;
-  if (totalEl) totalEl.textContent = gameQueue.length;
-  if (countEl) countEl.textContent = `完了: ${done} / ${gameQueue.length}`;
-  const pct = gameQueue.length ? Math.round(done / gameQueue.length * 100) : 0;
-  if (barEl) barEl.style.width = pct + '%';
-  if (pctEl) pctEl.textContent = pct + '%';
+  document.getElementById('prog-count').textContent = `完了: ${done} / ${gameQueue.length}`;
   const complete = document.getElementById('prog-complete');
-  if (complete) complete.classList.toggle('show', done === gameQueue.length && gameQueue.length > 0);
+  complete.style.display = done === gameQueue.length && gameQueue.length > 0 ? 'flex' : 'none';
 }
 
-function openGame(i) {
-  currentIdx = i;
-  if (gameQueue[i] && gameQueue[i].url) openGamePlayer(gameQueue[i].url, gameQueue[i].name);
-  renderProgress();
-}
-
-function markDone(i) {
-  gameCompleted[i] = true;
-  if (i + 1 < gameQueue.length) currentIdx = i + 1;
-  renderProgress();
-  if (gameQueue[i]) saveGameResult(gameQueue[i].name, currentCourseId, true, null);
-}
-
-function exitProgress() {
-  if (confirm('進行中のゲームを終了しますか？')) {
-    const iframe = document.getElementById('game-iframe');
-    if (iframe) iframe.src = 'about:blank';
-    go(progReturn);
-  }
-}
+function openGame(i)  { currentIdx=i; if (gameQueue[i]?.url) openGamePlayer(gameQueue[i].url, gameQueue[i].name); renderProgress(); }
+function markDone(i)  { gameCompleted[i]=true; if (i+1<gameQueue.length) currentIdx=i+1; renderProgress(); }
+function exitProgress() { if (confirm('進行中のゲームを終了しますか？')) { const f=document.getElementById('game-iframe'); if(f) f.src='about:blank'; go(progReturn); } }
 
 // ════════════════════════════════
-// ゲームプレイヤー（フルスクリーンiframe）
+// ゲームプレイヤー
 // ════════════════════════════════
-let playerBarHidden = false;
-let playerBarTimer = null;
-
-function openGamePlayer(url, title) {
+let _barHidden=false, _barTimer=null;
+function openGamePlayer(url,title) {
   if (!url) { alert('このゲームは準備中です'); return; }
-  const iframe = document.getElementById('game-iframe');
-  const titleEl = document.getElementById('game-player-title');
-  if (!iframe) return;
-  iframe.src = url;
-  if (titleEl) titleEl.textContent = title || '';
-  playerBarHidden = false;
-  showPlayerBar();
-  go('page-game-player');
-  resetBarTimer();
+  const f=document.getElementById('game-iframe'), t=document.getElementById('game-player-title');
+  f.src=url; t.textContent=title||''; _barHidden=false; showPlayerBar(); go('page-game-player'); resetBarTimer();
 }
-
-function closeGamePlayer() {
-  const iframe = document.getElementById('game-iframe');
-  if (iframe) iframe.src = 'about:blank';
-  clearTimeout(playerBarTimer);
-  go('page-progress');
-}
-
-function togglePlayerBar() {
-  if (playerBarHidden) showPlayerBar(); else hidePlayerBar();
-}
-
+function closeGamePlayer() { const f=document.getElementById('game-iframe'); if(f) f.src='about:blank'; clearTimeout(_barTimer); go('page-progress'); }
+function togglePlayerBar() { _barHidden ? showPlayerBar() : hidePlayerBar(); }
 function showPlayerBar() {
-  const bar = document.getElementById('game-player-bar');
-  const iframe = document.getElementById('game-iframe');
-  if (!bar || !iframe) return;
-  bar.style.opacity = '1'; bar.style.transform = 'translateY(0)'; bar.style.pointerEvents = 'auto';
-  iframe.style.top = '52px'; iframe.style.height = 'calc(100% - 52px)';
-  playerBarHidden = false;
-  resetBarTimer();
+  const bar=document.getElementById('game-player-bar'), f=document.getElementById('game-iframe');
+  bar.style.opacity='1'; bar.style.transform='translateY(0)'; bar.style.pointerEvents='auto';
+  f.style.top='52px'; f.style.height='calc(100% - 52px)'; _barHidden=false; resetBarTimer();
 }
-
 function hidePlayerBar() {
-  const bar = document.getElementById('game-player-bar');
-  const iframe = document.getElementById('game-iframe');
-  if (!bar || !iframe) return;
-  bar.style.opacity = '0'; bar.style.transform = 'translateY(-52px)'; bar.style.pointerEvents = 'none';
-  iframe.style.top = '0'; iframe.style.height = '100%';
-  playerBarHidden = true;
-  clearTimeout(playerBarTimer);
+  const bar=document.getElementById('game-player-bar'), f=document.getElementById('game-iframe');
+  bar.style.opacity='0'; bar.style.transform='translateY(-52px)'; bar.style.pointerEvents='none';
+  f.style.top='0'; f.style.height='100%'; _barHidden=true; clearTimeout(_barTimer);
 }
-
-function resetBarTimer() {
-  clearTimeout(playerBarTimer);
-  playerBarTimer = setTimeout(hidePlayerBar, 4000);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const playerPage = document.getElementById('page-game-player');
-  if (playerPage) playerPage.addEventListener('click', () => { if (playerBarHidden) showPlayerBar(); });
+function resetBarTimer() { clearTimeout(_barTimer); _barTimer=setTimeout(hidePlayerBar,4000); }
+document.addEventListener('DOMContentLoaded',()=>{
+  const pp=document.getElementById('page-game-player');
+  if(pp) pp.addEventListener('click',()=>{ if(_barHidden) showPlayerBar(); });
 });
 
 // ════════════════════════════════
-// UD（ユニバーサルデザイン）設定
+// UD設定
 // ════════════════════════════════
-const UD_KEY = 'nokatsu_ud_settings';
-let udSettings = { fontSize:'normal', theme:'normal', border:false, linespace:false, noAnim:false, tts:false, ttsRate:1.0 };
-let ttsEnabled = false;
-let ttsRate = 1.0;
+const UD_KEY='nokatsu_ud_settings';
+let udSettings={fontSize:'normal',theme:'normal',border:false,linespace:false,noAnim:false,tts:false,ttsRate:1.0};
+let ttsEnabled=false, ttsRate=1.0;
 
 function loadUDSettings() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(UD_KEY) || '{}');
-    udSettings = Object.assign(udSettings, saved);
-  } catch(e) {}
+  try { const s=JSON.parse(localStorage.getItem(UD_KEY)||'{}'); udSettings=Object.assign(udSettings,s); } catch(e){}
   applyAllUD();
 }
-
 function applyAllUD() {
-  const b = document.body;
+  const b=document.body;
   b.classList.remove('ud-font-large','ud-font-xlarge');
-  if (udSettings.fontSize === 'large')  b.classList.add('ud-font-large');
-  if (udSettings.fontSize === 'xlarge') b.classList.add('ud-font-xlarge');
+  if (udSettings.fontSize==='large')  b.classList.add('ud-font-large');
+  if (udSettings.fontSize==='xlarge') b.classList.add('ud-font-xlarge');
   b.classList.remove('ud-invert','ud-dark','ud-grayscale');
-  if (udSettings.theme === 'invert')    b.classList.add('ud-invert');
-  if (udSettings.theme === 'dark')      b.classList.add('ud-dark');
-  if (udSettings.theme === 'grayscale') b.classList.add('ud-grayscale');
-  b.classList.toggle('ud-border',    udSettings.border);
-  b.classList.toggle('ud-linespace', udSettings.linespace);
-  b.classList.toggle('ud-no-anim',   udSettings.noAnim);
-  ttsEnabled = udSettings.tts;
-  ttsRate    = udSettings.ttsRate || 1.0;
+  if (udSettings.theme==='invert')    b.classList.add('ud-invert');
+  if (udSettings.theme==='dark')      b.classList.add('ud-dark');
+  if (udSettings.theme==='grayscale') b.classList.add('ud-grayscale');
+  b.classList.toggle('ud-border',    !!udSettings.border);
+  b.classList.toggle('ud-linespace', !!udSettings.linespace);
+  b.classList.toggle('ud-no-anim',   !!udSettings.noAnim);
+  ttsEnabled=udSettings.tts; ttsRate=udSettings.ttsRate||1.0;
   syncSettingsUI();
 }
-
 function syncSettingsUI() {
-  ['normal','large','xlarge'].forEach(v => {
-    const btn = document.getElementById('fs-' + v);
-    if (btn) btn.classList.toggle('active', udSettings.fontSize === v);
-  });
-  ['normal','dark','invert','grayscale'].forEach(v => {
-    const btn = document.getElementById('theme-' + v);
-    if (btn) btn.classList.toggle('active', udSettings.theme === v);
-  });
-  syncToggle('tog-border',    udSettings.border);
-  syncToggle('tog-linespace', udSettings.linespace);
-  syncToggle('tog-noanim',    udSettings.noAnim);
-  syncToggle('tog-tts',       udSettings.tts);
-  ['slow','normal','fast'].forEach(v => { const b = document.getElementById('rate-' + v); if (b) b.classList.remove('active'); });
-  const rateMap = {0.7:'slow', 1.0:'normal', 1.4:'fast'};
-  const rBtn = document.getElementById('rate-' + (rateMap[udSettings.ttsRate] || 'normal'));
-  if (rBtn) rBtn.classList.add('active');
-  const lbl = document.getElementById('tts-rate-lbl');
-  if (lbl) lbl.textContent = udSettings.ttsRate === 0.7 ? 'ゆっくり' : udSettings.ttsRate === 1.4 ? 'はやい' : '普通';
-  const opts = document.getElementById('tts-opts');
-  if (opts) opts.style.display = udSettings.tts ? 'flex' : 'none';
+  ['normal','large','xlarge'].forEach(v=>{ const b=document.getElementById('fs-'+v); if(b) b.classList.toggle('active',udSettings.fontSize===v); });
+  ['normal','dark','invert','grayscale'].forEach(v=>{ const b=document.getElementById('theme-'+v); if(b) b.classList.toggle('active',udSettings.theme===v); });
+  [['tog-border','border'],['tog-linespace','linespace'],['tog-noanim','noAnim'],['tog-tts','tts']].forEach(([id,key])=>{ const el=document.getElementById(id); if(el) el.setAttribute('aria-checked',udSettings[key]?'true':'false'); });
+  ['slow','normal','fast'].forEach(v=>{ const b=document.getElementById('rate-'+v); if(b) b.classList.remove('active'); });
+  const rm={0.7:'slow',1.0:'normal',1.4:'fast'}; const rb=document.getElementById('rate-'+(rm[udSettings.ttsRate]||'normal')); if(rb) rb.classList.add('active');
+  const lbl=document.getElementById('tts-rate-lbl'); if(lbl) lbl.textContent=udSettings.ttsRate===0.7?'ゆっくり':udSettings.ttsRate===1.4?'はやい':'普通';
+  const opts=document.getElementById('tts-opts'); if(opts) opts.style.display=udSettings.tts?'flex':'none';
 }
-
-function syncToggle(id, val) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.setAttribute('aria-checked', val ? 'true' : 'false');
+function saveUD() { localStorage.setItem(UD_KEY,JSON.stringify(udSettings)); }
+function setFontSize(v) { udSettings.fontSize=v; applyAllUD(); saveUD(); if(ttsEnabled) speak({'normal':'標準','large':'大きい','xlarge':'とても大きい'}[v]); }
+function setTheme(v) { udSettings.theme=v; applyAllUD(); saveUD(); if(ttsEnabled) speak({'normal':'通常','dark':'ダーク','invert':'白黒反転','grayscale':'グレースケール'}[v]); }
+function toggleUD(key,btn) {
+  const m={'border':'border','linespace':'linespace','no-anim':'noAnim'}; const prop=m[key]||key;
+  udSettings[prop]=!udSettings[prop]; applyAllUD(); saveUD();
+  const lbl=btn.closest('.ud-trow')&&btn.closest('.ud-trow').querySelector('.ud-tlabel');
+  if(ttsEnabled&&lbl) speak(lbl.textContent+'：'+(udSettings[prop]?'オン':'オフ'));
 }
-
-function saveUD() { localStorage.setItem(UD_KEY, JSON.stringify(udSettings)); }
-
-function setFontSize(val) { udSettings.fontSize = val; applyAllUD(); saveUD(); if (ttsEnabled) speak({'normal':'標準','large':'大きい','xlarge':'とても大きい'}[val]); }
-function setTheme(val) { udSettings.theme = val; applyAllUD(); saveUD(); if (ttsEnabled) speak({'normal':'通常','dark':'ダーク','invert':'白黒反転','grayscale':'グレースケール'}[val]); }
-
-function toggleUD(key, btn) {
-  const map = {'border':'border','linespace':'linespace','no-anim':'noAnim'};
-  const prop = map[key] || key;
-  udSettings[prop] = !udSettings[prop];
-  applyAllUD(); saveUD();
-  const lbl = btn.closest('.ud-trow') && btn.closest('.ud-trow').querySelector('.ud-tlabel');
-  if (ttsEnabled && lbl) speak(lbl.textContent + '：' + (udSettings[prop] ? 'オン' : 'オフ'));
-}
-
-function toggleTTS(btn) { udSettings.tts = !udSettings.tts; syncSettingsUI(); saveUD(); if (udSettings.tts) speak('音声読み上げをオンにしました'); }
-function setTTSRate(rate, label, btn) { udSettings.ttsRate = rate; ttsRate = rate; syncSettingsUI(); saveUD(); speak('読み上げ速度：' + label); }
+function toggleTTS(btn) { udSettings.tts=!udSettings.tts; syncSettingsUI(); saveUD(); if(udSettings.tts) speak('音声読み上げをオンにしました'); }
+function setTTSRate(r,label,btn) { udSettings.ttsRate=r; ttsRate=r; syncSettingsUI(); saveUD(); speak('読み上げ速度：'+label); }
 function testTTS() { speak('こんにちは。まいにち脳活です。音声読み上げのテストです。'); }
-function resetUDSettings() { if (!confirm('全ての設定を初期値に戻しますか？')) return; udSettings = {fontSize:'normal',theme:'normal',border:false,linespace:false,noAnim:false,tts:false,ttsRate:1.0}; applyAllUD(); saveUD(); speak('設定をリセットしました'); }
+function resetUDSettings() { if(!confirm('全ての設定を初期値に戻しますか？')) return; udSettings={fontSize:'normal',theme:'normal',border:false,linespace:false,noAnim:false,tts:false,ttsRate:1.0}; applyAllUD(); saveUD(); }
 
 function speak(text) {
-  if (!('speechSynthesis' in window)) return;
+  if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = 'ja-JP'; utt.rate = ttsRate; utt.pitch = 1.0; utt.volume = 1.0;
-  const voices = window.speechSynthesis.getVoices();
-  const jaVoice = voices.find(v => v.lang.startsWith('ja'));
-  if (jaVoice) utt.voice = jaVoice;
-  window.speechSynthesis.speak(utt);
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='ja-JP'; u.rate=ttsRate; u.pitch=1.0; u.volume=1.0;
+  const v=window.speechSynthesis.getVoices().find(v=>v.lang.startsWith('ja')); if(v) u.voice=v;
+  window.speechSynthesis.speak(u);
 }
+if('speechSynthesis' in window) window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
 
-document.addEventListener('click', function(e) {
-  if (!ttsEnabled) return;
-  const target = e.target.closest('button,.menu-card,.tr-item,.tr-sel-btn,.skill-pill,.ud-cbtn');
-  if (!target) return;
-  const text = target.getAttribute('data-speak')
-    || target.querySelector('.menu-card-title,.tr-card-label,.tr-name,.ud-tlabel,.tr-sel-name')?.textContent
-    || target.textContent.trim().slice(0, 40);
-  if (text) speak(text);
-}, true);
-
-if ('speechSynthesis' in window) {
-  window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-}
+document.addEventListener('click',function(e){
+  if(!ttsEnabled) return;
+  const t=e.target.closest('button,.menu-card,.skill-pill,.ud-cbtn');
+  if(!t) return;
+  const text=t.getAttribute('data-speak')||t.querySelector('.ud-tlabel')?.textContent||t.textContent.trim().slice(0,40);
+  if(text) speak(text);
+},true);
 
 // ════════════════════════════════
-// Supabase 認証
-// ════════════════════════════════
-let supabase = null;
-let currentUser = null;
-let isGuest = false;
-
-function initSupabase(callback) {
-  // window.supabase が既にロード済みなら即時初期化
-  if (window.supabase) {
-    _createSupabaseClient();
-    if (callback) callback();
-    return;
-  }
-  // 動的にCDNをロード
-  const script = document.createElement('script');
-  script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-  script.onload = () => {
-    _createSupabaseClient();
-    if (callback) callback();
-  };
-  script.onerror = () => {
-    console.warn('Supabase CDN load failed. Running in guest mode.');
-    if (callback) callback();
-  };
-  document.head.appendChild(script);
-}
-
-function _createSupabaseClient() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('nokatsu_admin_sb') || '{}');
-    if (saved.url && saved.key) {
-      supabase = window.supabase.createClient(saved.url, saved.key);
-      return;
-    }
-  } catch(e) {}
-  if (!SUPABASE_URL.includes('YOUR_PROJECT')) {
-    try { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch(e) {}
-  }
-}
-
-function switchAuthTab(tab) {
-  const isSI = tab === 'signin';
-  document.getElementById('form-signin').style.display = isSI ? 'flex' : 'none';
-  document.getElementById('form-signup').style.display = isSI ? 'none' : 'flex';
-  document.getElementById('tab-signin').style.cssText = isSI ? 'flex:1;padding:12px;border:none;border-radius:11px;font-size:18px;font-weight:900;cursor:pointer;background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,0.1);' : 'flex:1;padding:12px;border:none;border-radius:11px;font-size:18px;font-weight:900;cursor:pointer;background:none;color:#9CA3AF;';
-  document.getElementById('tab-signup').style.cssText = isSI ? 'flex:1;padding:12px;border:none;border-radius:11px;font-size:18px;font-weight:900;cursor:pointer;background:none;color:#9CA3AF;' : 'flex:1;padding:12px;border:none;border-radius:11px;font-size:18px;font-weight:900;cursor:pointer;background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,0.1);';
-}
-
-async function doSignIn() {
-  const email = document.getElementById('si-email').value.trim();
-  const pass  = document.getElementById('si-pass').value;
-  const errEl = document.getElementById('si-error');
-  errEl.style.display = 'none';
-  if (!email || !pass) { showAuthError(errEl, 'メールアドレスとパスワードを入力してください'); return; }
-  if (!supabase) { showAuthError(errEl, 'Supabase未設定のため、ゲストモードで起動します'); setTimeout(doGuestLogin, 1500); return; }
-  document.getElementById('login-card').querySelectorAll('button').forEach(b => b.disabled = true);
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
-  document.getElementById('login-card').querySelectorAll('button').forEach(b => b.disabled = false);
-  if (error) { showAuthError(errEl, error.message.includes('Invalid login') ? 'メールアドレスまたはパスワードが違います' : error.message); return; }
-  onAuthSuccess(data.user);
-}
-
-async function doSignUp() {
-  const name  = document.getElementById('su-name').value.trim();
-  const email = document.getElementById('su-email').value.trim();
-  const pass  = document.getElementById('su-pass').value;
-  const errEl = document.getElementById('su-error');
-  const sucEl = document.getElementById('su-success');
-  errEl.style.display = 'none'; sucEl.style.display = 'none';
-  if (!name)  { showAuthError(errEl, 'お名前を入力してください'); return; }
-  if (!email) { showAuthError(errEl, 'メールアドレスを入力してください'); return; }
-  if (pass.length < 6) { showAuthError(errEl, 'パスワードは6文字以上で設定してください'); return; }
-  if (!supabase) { showAuthError(errEl, 'Supabase未設定です。管理者にお問い合わせください。'); return; }
-  document.getElementById('login-card').querySelectorAll('button').forEach(b => b.disabled = true);
-  const { data, error } = await supabase.auth.signUp({ email, password: pass, options: { data: { display_name: name } } });
-  document.getElementById('login-card').querySelectorAll('button').forEach(b => b.disabled = false);
-  if (error) { showAuthError(errEl, error.message); return; }
-  if (data.user && data.session) { onAuthSuccess(data.user); }
-  else { sucEl.style.display = 'block'; sucEl.textContent = '確認メールを送信しました。メールのリンクをクリックしてログインしてください。'; }
-}
-
-function doGuestLogin() {
-  isGuest = true;
-  currentUser = { id:'guest', email:'guest', user_metadata:{ display_name:'ゲスト' } };
-  updateAccountDisplay();
-  go('page-top');
-}
-
-function onAuthSuccess(user) {
-  currentUser = user; isGuest = false;
-  updateAccountDisplay();
-  go('page-top');
-}
-
-function updateAccountDisplay() {
-  if (!currentUser) return;
-  const name = isGuest ? 'ゲスト' : (currentUser.user_metadata?.display_name || currentUser.email?.split('@')[0] || 'ユーザー');
-  const nameEl = document.getElementById('account-name');
-  const avatarEl = document.getElementById('account-avatar');
-  if (nameEl)   nameEl.textContent   = name;
-  if (avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
-  const popName = document.getElementById('popup-username');
-  const popMail = document.getElementById('popup-email');
-  const popType = document.getElementById('popup-type');
-  if (popName) popName.textContent = name;
-  if (popMail) popMail.textContent = isGuest ? '（未登録）' : (currentUser.email || '');
-  if (popType) popType.textContent = isGuest ? 'ゲストモード（結果は保存されません）' : '登録済みユーザー';
-}
-
-function showAccountMenu() { updateAccountDisplay(); document.getElementById('account-popup').style.display = 'block'; document.getElementById('account-overlay').style.display = 'block'; }
-function closeAccountPopup() { document.getElementById('account-popup').style.display = 'none'; document.getElementById('account-overlay').style.display = 'none'; }
-
-async function doSignOut() {
-  closeAccountPopup();
-  if (supabase && !isGuest) await supabase.auth.signOut();
-  currentUser = null; isGuest = false;
-  go('page-login');
-}
-
-async function saveGameResult(gameName, courseId, completed, durationSec) {
-  if (isGuest || !supabase || !currentUser) return;
-  try {
-    await supabase.from('game_results').insert({ user_id:currentUser.id, game_name:gameName, course_id:courseId||null, completed, duration_sec:durationSec||null, played_at:new Date().toISOString() });
-  } catch(e) { console.warn('saveGameResult:', e); }
-}
-
-function showAuthError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
-
-async function restoreSession() {
-  if (!supabase) {
-    // Supabase未設定/ロード失敗 → ゲストモードで起動
-    doGuestLogin();
-    return;
-  }
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) { onAuthSuccess(session.user); return; }
-    // セッションなし → ログイン画面のまま表示
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN'  && session?.user) onAuthSuccess(session.user);
-      if (event === 'SIGNED_OUT') { currentUser = null; go('page-login'); }
-    });
-  } catch(e) {
-    console.warn('Session restore failed:', e);
-    doGuestLogin();
-  }
-}
-
-// ════════════════════════════════
-// 起動処理
+// 起動
 // ════════════════════════════════
 loadUDSettings();
-initSupabase(function() {
-  restoreSession();
-});
-
-// PWA Service Worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(r => console.log('SW:', r.scope))
-      .catch(e => console.log('SW error:', e));
-  });
-}
-
-// PWA インストールバナー
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault(); deferredPrompt = e;
-  const banner = document.getElementById('install-banner');
-  if (banner) { banner.classList.add('show'); banner.style.display = 'flex'; }
-});
-function installPWA() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(() => { deferredPrompt = null; document.getElementById('install-banner').classList.remove('show'); });
-}
-window.addEventListener('appinstalled', () => { const b = document.getElementById('install-banner'); if (b) b.style.display='none'; });
-
 </script>
 </body>
 </html>
